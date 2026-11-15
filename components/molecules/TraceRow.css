@@ -1,0 +1,30 @@
+/* One row of the inspector's definition list. */
+
+.trace-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  padding: 8px 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.trace-row dt {
+  color: var(--dim);
+  font: 600 12px/1.6 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.trace-row dd {
+  margin: 0;
+  font-size: 14px;
+  word-break: break-word;
+}
+.trace-row dd.mono {
+  font: 500 13px/1.6 var(--mono);
+}
+
+@media (max-width: 699px) {
+  .trace-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

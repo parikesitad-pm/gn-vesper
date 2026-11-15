@@ -18,7 +18,12 @@
   margin-inline: auto;
   z-index: 49;
   width: min(780px, calc(100% - 24px));
-  overflow: hidden;
+  max-height: calc(100dvh - 24px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--paper) 22%, transparent) transparent;
   border: 1px solid var(--glass-stroke);
   border-radius: var(--radius);
   background: var(--glass);
@@ -58,19 +63,8 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 22px;
-}
-
-.vpx-body {
-  fill: color-mix(in srgb, var(--paper) 72%, transparent);
-}
-.vpx-eye {
-  fill: var(--ink);
-}
-.vpx-pupil,
-.vpx-mark {
-  fill: var(--accent);
+  width: 28px;
+  height: 28px;
 }
 
 .notch[data-face="think"] .notch-face {
@@ -213,30 +207,6 @@
   text-transform: uppercase;
 }
 
-.chip {
-  pointer-events: auto;
-  cursor: pointer;
-  padding: 8px 14px;
-  border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--paper) 8%, transparent);
-  color: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-  transition: background 0.2s, border-color 0.2s, scale 0.15s;
-}
-.chip:hover {
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  border-color: var(--accent);
-}
-.chip:active {
-  scale: 0.97;
-}
-.chip:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
 /* The outcome line inside the tray, above the examples. */
 .notch-tray-out {
   flex: 1 1 100%;
@@ -253,17 +223,24 @@
   color: var(--yellow);
 }
 
-/* Available to assistive tech, not drawn. */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
+/* ---- a grounded creator answer ------------------------------------------------------------- */
+
+.notch-know {
+  flex: 1 1 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 6px;
+}
+
+.notch-answer {
+  margin: 0;
+  color: var(--paper);
+  font-weight: 500;
+  line-height: 1.55;
+  white-space: normal;
+  text-align: left;
 }
 
 @keyframes notch-hop {

@@ -1,40 +1,27 @@
-# Vesper faces — placeholders
+# Vesper faces
 
-The faces Vesper shows in the notch (**answer**, **think**, **sleep**, **oops**) are
-**placeholders**, drawn from scratch in this repository.
+The four faces Vesper shows in the notch are the **approved originals**:
 
-## Why placeholders
+| State | File | Used when |
+| --- | --- | --- |
+| `answer` | `vesper.svg` | The notch is open and showing an input, a result or a grounded answer |
+| `think` | `vesper-think.svg` | Vesper is interpreting or showing a clarification |
+| `sleep` | `vesper-sleep.svg` | The notch is idle at rest |
+| `oops` | `vesper-oops.svg` | A provider, classifier or retrieval call failed |
 
-The original Vesper pixel faces live in a private portfolio repository and are subject to an
-ownership/licensing review before redistribution. That review has **not** happened, so the original
-assets are **not** included here and must not be added without the owner's explicit approval.
+They are included here by the repository owner for this standalone showcase. The private portfolio
+repository they came from is **not** a dependency, and no portfolio code runs in this project. The artwork is
+not a generic template asset; ask the owner before reusing it outside this repository.
 
-The placeholder faces are deliberately plain so that nobody mistakes them for the real ones. They
-are defined as 12×10 pixel grids in `components/notch/VesperFace.tsx` and rendered as crisp SVG
-squares, so they scale the same way the originals would.
+## How they are rendered
 
-## States
+`components/atoms/VesperFace.tsx` loads all four from `public/vesper/`, stacks them in one fixed-size box and
+crossfades to the active face. Keeping all four mounted means switching state never changes layout and never
+waits for an image mid-transition.
 
-| State | Used when |
-| --- | --- |
-| `answer` | The notch is open and showing an input or a result |
-| `think` | Vesper is interpreting, or showing a clarification |
-| `sleep` | The notch is idle at rest |
-| `oops` | The provider/classifier failed |
+The faces are decorative: they are `aria-hidden`, and the notch's `aria-live` status is what announces state
+to assistive technology. Motion is disabled by the global `[data-motion="off"]` rule and by
+`prefers-reduced-motion`.
 
-## How to swap in approved assets
-
-Only do this once the assets have been approved for redistribution.
-
-1. Add the approved files to this directory (`public/vesper/`), for example
-   `vesper.svg`, `vesper-think.svg`, `vesper-sleep.svg`, `vesper-oops.svg`.
-2. Update `components/notch/VesperFace.tsx` to render them instead of the inline grids, keeping the
-   same `FaceState` values and the same public prop shape
-   (`{ state, size, className }`) so no other file changes.
-3. Keep them `aria-hidden` and decorative — the notch's status is already announced through its
-   `aria-live` region, so the face must not become the only way to understand state.
-4. Update the "Limitations" and placeholder notes in `README.md` and this file to reflect that the
-   real assets are now in use, and record their license/provenance.
-
-If you are unsure whether an asset may be redistributed, leave the placeholder in place and ask
-first.
+If you replace a face, keep the same filenames and the same square aspect ratio, and keep it `aria-hidden` so
+the artwork never becomes the only way to understand state.

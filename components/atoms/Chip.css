@@ -1,0 +1,25 @@
+/* A chip inherits its type and colour from its surface, so it reads correctly in the notch and on the page. */
+
+.chip {
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  transition: background 0.2s, border-color 0.2s, scale 0.15s;
+}
+.chip:hover {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: var(--accent);
+}
+.chip:active {
+  scale: 0.97;
+}
+.chip:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

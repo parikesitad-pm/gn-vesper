@@ -1,10 +1,8 @@
 /**
- * The classifier contract.
- *
- * A classifier is any function that turns one line of text into one line of candidate intent. The pipeline does
- * not know or care whether that is a local rule or a model: it validates the reply the same way either way.
- * Provider adapters live in `lib/providers/` and the server route is the only thing that holds a key.
+ * The browser-side classifier: it posts to this app's own `/api/classify`, which is the only place a provider
+ * key exists. A non-OK response (no key, quota, timeout) rejects, so the pipeline can fall back cleanly.
  */
+import type { ProviderAttempt } from "@/lib/providers/types";
 import type { RawIntent } from "./types";
 
 export type ClassifierReply = {
@@ -15,6 +13,8 @@ export type ClassifierReply = {
   model: string;
   /** Measured round-trip to the provider, in milliseconds. */
   latencyMs: number;
+  /** Every provider attempted, including failed fallback attempts. */
+  attempts?: ProviderAttempt[];
 };
 
 export type Classifier = (input: string, signal?: AbortSignal) => Promise<ClassifierReply>;
@@ -22,10 +22,16 @@ export type Classifier = (input: string, signal?: AbortSignal) => Promise<Classi
 /** A candidate the pipeline can hand to `validate` without knowing where it came from. */
 export type Candidate = RawIntent & { source: "ai"; raw: string; provider: string; model: string; latencyMs: number };
 
-/**
- * The browser-side classifier: it posts to this app's own `/api/classify`, which is the only place a provider
- * key exists. A non-OK response (no key, quota, timeout) rejects, so the pipeline can fall back cleanly.
- */
+export class ClassifierError extends Error {
+  constructor(
+    message: string,
+    readonly attempts: ProviderAttempt[] = [],
+  ) {
+    super(message);
+    this.name = "ClassifierError";
+  }
+}
+
 export const remoteClassifier: Classifier = async (input, signal) => {
   const res = await fetch("/api/classify", {
     method: "POST",
@@ -34,15 +40,22 @@ export const remoteClassifier: Classifier = async (input, signal) => {
     signal,
   });
   if (!res.ok) {
-    const body = (await res.json().catch(() => ({}))) as { error?: string };
-    throw new Error(body.error ?? `classify-${res.status}`);
+    const body = (await res.json().catch(() => ({}))) as { error?: string; attempts?: ProviderAttempt[] };
+    throw new ClassifierError(body.error ?? `classify-${res.status}`, body.attempts ?? []);
   }
-  const body = (await res.json()) as { raw?: string; provider?: string; model?: string; latencyMs?: number };
-  if (typeof body.raw !== "string") throw new Error("classify-malformed");
+  const body = (await res.json()) as {
+    raw?: string;
+    provider?: string;
+    model?: string;
+    latencyMs?: number;
+    attempts?: ProviderAttempt[];
+  };
+  if (typeof body.raw !== "string") throw new ClassifierError("classify-malformed");
   return {
     raw: body.raw,
     provider: body.provider ?? "unknown",
     model: body.model ?? "unknown",
     latencyMs: typeof body.latencyMs === "number" ? body.latencyMs : 0,
+    attempts: body.attempts ?? [],
   };
 };

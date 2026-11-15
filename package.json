@@ -1,6 +1,6 @@
 {
   "name": "vesper-notch-showcase",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "A standalone showcase of Vesper: a natural-language command interface living inside a small notch.",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "eval": "node --import tsx eval/run.ts",
+    "eval:rag": "node --import tsx eval/rag.ts",
     "check": "npm run typecheck && npm run lint && npm test && npm run eval"
   },
   "dependencies": {

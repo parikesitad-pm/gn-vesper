@@ -1,4 +1,4 @@
-/* The page under the notch: a short explanation, the playground, the pipeline, the inspector, feedback. */
+/* The page under the notch: a short explanation, examples, the pipeline, the inspector, feedback. */
 
 .page {
   padding: 96px 0 64px;
@@ -56,23 +56,6 @@
 }
 .btn:hover {
   background: transparent;
-  color: var(--accent);
-}
-
-.ghost-btn {
-  flex: none;
-  min-height: 36px;
-  padding: 0 16px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--fg);
-  font: 600 12px var(--mono);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-.ghost-btn:hover {
-  border-color: var(--accent);
   color: var(--accent);
 }
 
@@ -139,61 +122,6 @@
   margin-bottom: 8px;
 }
 
-.inspector {
-  padding: 20px 22px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
-}
-.inspector-head {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.inspector-head h2 {
-  margin: 0;
-  margin-right: auto;
-}
-.inspector-empty {
-  margin: 0;
-  color: var(--dim);
-  font: 500 13px var(--mono);
-}
-.inspector-note {
-  margin: 18px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  color: var(--dim);
-  font: 500 12px/1.6 var(--mono);
-}
-
-.trace {
-  margin: 4px 0 0;
-  display: grid;
-  gap: 2px;
-}
-.trace-row {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 14px;
-  padding: 8px 0;
-  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-}
-.trace-row dt {
-  color: var(--dim);
-  font: 600 12px/1.6 var(--mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.trace-row dd {
-  margin: 0;
-  font-size: 14px;
-  word-break: break-word;
-}
-.trace-row dd.mono {
-  font: 500 13px/1.6 var(--mono);
-}
-
 .foot {
   margin-top: 56px;
   padding-top: 24px;
@@ -201,14 +129,13 @@
   color: var(--dim);
   font-size: 13px;
 }
+.foot p {
+  margin: 0 0 10px;
+}
 
 @media (max-width: 699px) {
   .page {
     padding-top: 84px;
-  }
-  .trace-row {
-    grid-template-columns: 1fr;
-    gap: 2px;
   }
   .step {
     grid-template-columns: 34px 1fr;

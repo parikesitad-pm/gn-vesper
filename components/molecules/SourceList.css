@@ -1,0 +1,29 @@
+/* Source pills. They inherit the surface's ink and take the accent for the outline. */
+
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.source-list-label {
+  margin-right: 2px;
+  color: color-mix(in srgb, currentColor 55%, transparent);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.source-link {
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: inherit;
+  font: 500 11px/1.3 var(--mono);
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.source-link:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  border-color: var(--accent);
+}

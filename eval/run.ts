@@ -3,11 +3,11 @@
  *
  * It runs the same `resolve()` the notch runs, in Demo Mode, over the cases in `cases.json`, and reports the
  * numbers the handover asks for: intent accuracy, false-action rate (an action taken where none was expected),
- * rule coverage, and the invalid-output rejection rate. It exits non-zero if a case regresses, so it can gate a
- * change.
+ * rule coverage, knowledge routing, and the invalid-output rejection rate. It exits non-zero if a case regresses,
+ * so it can gate a change.
  *
  * AI mode is deliberately not exercised here: it needs a key and a network, and the point of this set is the
- * deterministic path. A provider's own accuracy would be measured against the same cases with a real key.
+ * deterministic path. `npm run eval:rag` measures retrieval and grounded answers against the live public site.
  */
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -30,14 +30,20 @@ let falseActions = 0;
 let noActionCases = 0;
 let rulePath = 0;
 let fallbackPath = 0;
+let knowledgeCases = 0;
+let knowledgeRouted = 0;
 const failures: string[] = [];
 
 for (const c of data.cases) {
-  const { intent, trace } = await resolve(c.input, { aiAvailable: false });
-  const actual = render(intent);
+  const { intent, knowledge, trace } = await resolve(c.input, { aiAvailable: false });
+  const actual = knowledge ? "knowledge" : render(intent);
   if (trace.path === "rule") rulePath++;
   if (trace.path === "fallback") fallbackPath++;
   if (c.expect === null) noActionCases++;
+  if (c.expect === "knowledge") {
+    knowledgeCases++;
+    if (knowledge) knowledgeRouted++;
+  }
 
   if (actual === c.expect) {
     correct++;
@@ -67,6 +73,7 @@ console.log(`  cases                 ${total}`);
 console.log(`  intent accuracy       ${pct(correct, total)}  (${correct}/${total})`);
 console.log(`  false-action rate     ${pct(falseActions, noActionCases)}  (${falseActions}/${noActionCases} cases that must not act)`);
 console.log(`  resolved by rule      ${pct(rulePath, total)}  (${rulePath}/${total})`);
+console.log(`  knowledge routed      ${pct(knowledgeRouted, knowledgeCases)}  (${knowledgeRouted}/${knowledgeCases} creator questions)`);
 console.log(`  fell through          ${pct(fallbackPath, total)}  (${fallbackPath}/${total})`);
 console.log(`  invalid-output reject ${pct(rejected, rejectCases)}  (${rejected}/${rejectCases} bad model replies)`);
 console.log(`  provider latency      n/a in Demo Mode (no classifier call)`);

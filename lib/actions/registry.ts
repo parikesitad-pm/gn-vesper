@@ -19,6 +19,8 @@ export type ActionContext = {
   back: () => boolean;
   /** Opens the help/clarify state. */
   help: () => void;
+  /** Opens the one fixed creator URL in a new tab. Returns false when the browser blocks it. */
+  openCreator: () => boolean;
   /** Shows the handoff state for a question. */
   handoff: () => void;
 };
@@ -56,6 +58,10 @@ const ADAPTERS: { [K in ActionName]: (intent: Extract<VesperAction, { action: K 
   help: (_intent, ctx) => {
     ctx.help();
     return { adapter: "help", key: "help", arg: "", ok: true };
+  },
+  creator: (_intent, ctx) => {
+    const opened = ctx.openCreator();
+    return { adapter: "creator", key: opened ? "creator" : "creator.blocked", arg: "site", ok: opened };
   },
   handoff: (_intent, ctx) => {
     ctx.handoff();

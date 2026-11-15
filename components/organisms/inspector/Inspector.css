@@ -1,0 +1,77 @@
+/* The intent inspector: one bordered panel, a definition list, and the collapse control. */
+
+.inspector {
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+.inspector-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.inspector-head h2 {
+  margin: 0;
+  margin-right: auto;
+  font: 700 clamp(22px, 3vw, 30px) / 1.2 var(--sans);
+  letter-spacing: -0.01em;
+}
+.inspector-empty {
+  margin: 0;
+  color: var(--dim);
+  font: 500 13px var(--mono);
+}
+.inspector-note {
+  margin: 18px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--dim);
+  font: 500 12px/1.6 var(--mono);
+}
+
+/* The lists inside a trace row. The row itself lives in `molecules/TraceRow`. */
+.trace {
+  margin: 4px 0 0;
+  display: grid;
+  gap: 2px;
+}
+.trace-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+.trace-attempt {
+  font: 500 12px/1.5 var(--mono);
+  color: var(--dim);
+}
+.trace-attempt[data-ok="true"] {
+  color: var(--green);
+}
+.trace-attempt[data-ok="false"] {
+  color: var(--red);
+}
+.trace-hit {
+  font: 500 12px/1.5 var(--mono);
+  color: var(--dim);
+}
+.trace-list a {
+  font: 500 12px/1.5 var(--mono);
+}
+
+.ghost-btn {
+  flex: none;
+  min-height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font: 600 12px var(--mono);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.ghost-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

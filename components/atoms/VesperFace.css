@@ -1,0 +1,21 @@
+/* The four approved pixel faces, stacked and crossfaded. Fixed box, so a state change never shifts layout. */
+
+.vpx {
+  position: relative;
+  display: inline-block;
+  flex: none;
+}
+.vpx-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  image-rendering: pixelated;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+.vpx-img[data-active="true"] {
+  opacity: 1;
+}

@@ -6,15 +6,20 @@
  * when a phrase names an intent but not which one ("change the theme"), they return `ambiguous` rather than
  * guess. A correct "I'm not sure" beats a wrong action.
  *
- * Rules are ordered. The first match wins, and the ordering encodes intent: "cv bahasa indonesia" style
- * collisions cannot happen here, but "go back" must not be read as a navigation and a bare "pause" must not
- * silently toggle motion.
+ * The same file recognises creator questions. Those are a separate, read-only resolution (`knowledge`): they
+ * never become an action, and they are answered by the public-source retrieval route, not by an adapter.
+ *
+ * Rules are ordered. The first match wins, and the ordering encodes intent: an explicit creator-site command is
+ * checked before the question test, while every other question is checked before theme/language rules so "how do
+ * I change the theme?" cannot switch the theme.
  */
+import { identityIntent } from "../identity";
 import { looksLikeQuestion } from "./normalize";
 import type { VesperAction } from "./types";
 
 export type RuleOutcome =
   | { kind: "action"; intent: VesperAction }
+  | { kind: "knowledge"; question: string }
   | { kind: "ambiguous"; reason: string }
   | { kind: "none" };
 
@@ -93,9 +98,33 @@ const backish = (s: string) => has(s, /\b(go back|previous page|last page|back|k
 const helpish = (s: string) =>
   /^(help|bantuan|tolong|help me|\?)$/.test(s) || has(s, /\b(what can you do|apa yang bisa kamu lakukan|what can vesper do)\b/);
 
+/** Open the creator's website. Fixed destination only; there is no arbitrary URL action. */
+const creatorSiteish = (s: string) =>
+  has(
+    s,
+    /^(open|visit|go to|take me to|buka|buka website|buka situs)\b.*\b(creator|creator's|dap_?|d-ap|creator website|creator site|website dap|situs dap)\b/,
+  ) ||
+  /^(the )?(creator'?s? )?(website|site)$/.test(s) ||
+  /^(dap_?'?s?|d-ap\.my\.id)\s+(website|site)$/.test(s) ||
+  /^(creator|dap_?)\s+(website|site)$/.test(s);
+
 /**
- * The one local entry point. Returns an action, an explicit ambiguity, or `none` (nothing local matched — the
- * optional AI classifier gets a turn, and in Demo Mode the pipeline falls back to a help state).
+ * Does this line read as a question about dap_ or about Vesper, rather than about the showcase?
+ * This is intentionally topic-based: retrieval decides relevance, but only creator-ish lines may reach it.
+ */
+const creatorish = (s: string) =>
+  has(s, /\b(dap_?|dausan|parikesit|creator|pembuat|pencipta)\b/) ||
+  (has(s, /\bvesper\b/) &&
+    has(s, /\b(who|whom|whose|what|about|create[ds]?|creator|made|made|built|build|siapa|apa|tentang|pembuat|dibuat|membuat)\b/)) ||
+  has(
+    s,
+    /\b(about|profile|bio|skills?|stack|tech|experience|career|projects?|portfolio|services?|hire|freelance|contact|email|whatsapp|location|based|education|cv|resume|github|linkedin|jasa|pengalaman|keahlian|proyek|projek|kontak|hubungi|tinggal)\b/,
+  );
+
+/**
+ * The one local entry point. Returns an action, a read-only knowledge request, an explicit ambiguity, or `none`
+ * (nothing local matched — the optional AI classifier gets a turn, and in Demo Mode the pipeline falls back to
+ * a help state).
  */
 export function ruleIntent(normalized: string): RuleOutcome {
   const s = normalized.toLowerCase().trim();
@@ -104,8 +133,16 @@ export function ruleIntent(normalized: string): RuleOutcome {
   // Help is checked before the question test: "what can you do" is a request for the help state, not a handoff.
   if (helpish(s)) return { kind: "action", intent: { action: "help", arg: "" } };
 
-  // A question is a handoff before anything else: "how do I change the theme?" must not switch the theme.
-  if (looksLikeQuestion(s)) return { kind: "action", intent: { action: "handoff", arg: "question" } };
+  // An explicit "open the creator's website" is a command; "how do I open…" remains a question below.
+  if (!looksLikeQuestion(s) && creatorSiteish(s)) return { kind: "action", intent: { action: "creator", arg: "site" } };
+
+  // A question is routed before any theme/language/navigation rule. Identity/entity questions and creator
+  // questions go to public retrieval; everything else is an honest handoff, not an attempt to answer from
+  // nothing. `identityIntent` is the same classifier the answer layer uses, so routing and wording agree.
+  if (looksLikeQuestion(s)) {
+    if (identityIntent(s) || creatorish(s)) return { kind: "knowledge", question: normalized.trim() };
+    return { kind: "action", intent: { action: "handoff", arg: "question" } };
+  }
 
   // Back is explicit; a bare "back"/"kembali" is unambiguous here, but "back to work" is not a thing we have.
   if (backish(s)) return { kind: "action", intent: { action: "back", arg: "" } };
@@ -128,6 +165,9 @@ export function ruleIntent(normalized: string): RuleOutcome {
   // Navigation: a destination, with or without a verb ("show the architecture", "arsitektur").
   const dest = pick(s, DESTINATIONS) ?? BARE_DEST[s];
   if (dest && (navish(s) || BARE_DEST[s] !== undefined)) return { kind: "action", intent: { action: "navigate", arg: dest } };
+
+  // A topic without a question mark is still a knowledge request: "dap projects", "skills", "owl".
+  if (identityIntent(s) || creatorish(s)) return { kind: "knowledge", question: normalized.trim() };
 
   return { kind: "none" };
 }

@@ -1,0 +1,51 @@
+/* Creator attribution. Colours come from the surrounding surface; the handle and site use the accent. */
+
+.creator-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  color: inherit;
+}
+.creator-kicker {
+  color: color-mix(in srgb, currentColor 60%, transparent);
+  font: 600 11px/1.5 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.creator-name {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+.creator-name strong {
+  color: var(--accent);
+  font: 700 14px/1.4 var(--mono);
+}
+.creator-name span {
+  font-size: 13px;
+}
+.creator-name:hover span {
+  text-decoration: underline;
+}
+.creator-site {
+  color: var(--accent);
+  font: 500 12px/1.5 var(--mono);
+  text-decoration: none;
+}
+.creator-site:hover {
+  text-decoration: underline;
+}
+.creator-card-compact {
+  gap: 4px 8px;
+}
+.creator-card-compact .creator-name strong {
+  font-size: 12px;
+}
+.creator-card-compact .creator-name span,
+.creator-card-compact .creator-site {
+  font-size: 11px;
+}

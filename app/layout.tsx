@@ -17,9 +17,9 @@ const sans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Vesper Notch — a natural-language command interface",
+  title: "Vesper Notch — safe actions and grounded creator answers",
   description:
-    "Vesper turns a line of natural language into a safe, structured action — right from the notch. A standalone showcase with a visible intent pipeline.",
+    "Vesper turns one line into a safe, allow-listed action — or an answer grounded in dap_'s public site, with citations. A standalone showcase with a visible intent and retrieval pipeline.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

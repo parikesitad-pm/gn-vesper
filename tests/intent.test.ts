@@ -15,10 +15,11 @@ import { parseRaw, readIntent, validate } from "../lib/intent/validate";
 
 const DEMO = { aiAvailable: false } as const;
 
-const action = (input: string) => {
+const outcome = (input: string) => {
   const r = ruleIntent(normalize(input));
   return r.kind === "action" ? `${r.intent.action}${r.intent.arg ? ` ${r.intent.arg}` : ""}` : r.kind;
 };
+const action = outcome;
 
 // --- normalisation -----------------------------------------------------------------------------
 
@@ -68,6 +69,15 @@ test("a one-edit typo still resolves", () => {
   assert.equal(action("lihgt mode"), "theme light");
 });
 
+// --- the creator site action --------------------------------------------------------------------
+
+test("the creator site action opens one fixed destination only", () => {
+  assert.equal(action("Open the creator's website"), "creator site");
+  assert.equal(action("buka website dap_"), "creator site");
+  assert.equal(action("visit the creator site"), "creator site");
+  assert.equal(action("website"), "creator site");
+});
+
 // --- local rules: the safe failures -------------------------------------------------------------
 
 test("a named-but-unnamed intent is ambiguous, not guessed", () => {
@@ -79,8 +89,17 @@ test("a named-but-unnamed intent is ambiguous, not guessed", () => {
 test("questions hand off instead of becoming commands", () => {
   assert.equal(action("how do I change the theme?"), "handoff question");
   assert.equal(action("what can you do"), "help");
-  assert.equal(action("apa itu vesper?"), "handoff question");
+  assert.equal(action("why is the sky blue"), "handoff question");
   assert.equal(action("kenapa tema ini gelap?"), "handoff question");
+});
+
+test("creator questions route to read-only knowledge, never to an action", () => {
+  assert.equal(outcome("Who created Vesper?"), "knowledge");
+  assert.equal(outcome("What does dap_ build?"), "knowledge");
+  assert.equal(outcome("what is Vesper?"), "knowledge");
+  assert.equal(outcome("apa itu vesper?"), "knowledge");
+  assert.equal(outcome("dap projects"), "knowledge");
+  assert.equal(outcome("Apa keahlian dap_?"), "knowledge");
 });
 
 test("a line that is not a command matches nothing locally", () => {
@@ -93,10 +112,13 @@ test("a line that is not a command matches nothing locally", () => {
 
 test("validation accepts only allow-listed actions and arguments", () => {
   assert.deepEqual(validate({ action: "theme", arg: "neon" }), { ok: true, intent: { action: "theme", arg: "neon" } });
+  assert.deepEqual(validate({ action: "creator", arg: "site" }), { ok: true, intent: { action: "creator", arg: "site" } });
   assert.equal(validate({ action: "theme", arg: "blue" }).ok, false);
   assert.equal(validate({ action: "delete", arg: "" }).ok, false);
   assert.equal(validate({ action: "navigate", arg: "http://evil.example" }).ok, false);
   assert.equal(validate({ action: "back", arg: "somewhere" }).ok, false);
+  // `knowledge` is a routing signal, not an action: validation must reject it.
+  assert.equal(validate({ action: "knowledge", arg: "question" }).ok, false);
 });
 
 test("parseRaw tolerates a model's wrapping but keeps the words", () => {
@@ -132,6 +154,14 @@ test("an empty line does nothing", async () => {
   assert.equal(trace.validation.ok, false);
 });
 
+test("a creator question resolves to a knowledge request, not an intent", async () => {
+  const { intent, knowledge, trace } = await resolve("Who created Vesper?", DEMO);
+  assert.equal(intent, null);
+  assert.deepEqual(knowledge, { question: "Who created Vesper?" });
+  assert.equal(trace.kind, "know");
+  assert.equal(trace.path, "rule");
+});
+
 // --- pipeline: AI mode --------------------------------------------------------------------------
 
 const classifier = (raw: string, latencyMs = 12) => async () => ({
@@ -150,6 +180,15 @@ test("AI mode is used only when no rule matches", async () => {
   assert.equal(unknown.trace.path, "ai");
   assert.deepEqual(unknown.intent, { action: "theme", arg: "neon" });
   assert.equal(unknown.trace.latencyMs, 12);
+});
+
+test("the AI classifier can route to knowledge, which stays non-executable", async () => {
+  const deps = { aiAvailable: true, classifier: classifier("knowledge question") };
+  const { intent, knowledge, trace } = await resolve("gimme that purple glow", deps);
+  assert.equal(intent, null);
+  assert.deepEqual(knowledge, { question: "gimme that purple glow" });
+  assert.equal(trace.kind, "know");
+  assert.equal(trace.validation.ok, false);
 });
 
 test("a malformed model reply becomes an uncertain state, not an action", async () => {
@@ -183,7 +222,7 @@ test("prompt injection in the line cannot widen the allow-list", async () => {
 
 // --- execution ----------------------------------------------------------------------------------
 
-function fakeCtx(): { ctx: ActionContext; log: string[] } {
+function fakeCtx(openCreator = () => true): { ctx: ActionContext; log: string[] } {
   const log: string[] = [];
   let motion = true;
   return {
@@ -202,6 +241,11 @@ function fakeCtx(): { ctx: ActionContext; log: string[] } {
         return false;
       },
       help: () => log.push("help"),
+      openCreator: () => {
+        const opened = openCreator();
+        log.push(`creator:${opened ? "opened" : "blocked"}`);
+        return opened;
+      },
       handoff: () => log.push("handoff"),
     },
   };
@@ -212,6 +256,20 @@ test("adapters run one allow-listed action and report an outcome key", () => {
   const r = execute({ action: "theme", arg: "neon" }, ctx);
   assert.equal(r.key, "theme");
   assert.deepEqual(log, ["theme:neon"]);
+});
+
+test("the creator adapter opens the fixed site and reports a blocked popup honestly", () => {
+  const opened = fakeCtx();
+  assert.deepEqual(execute({ action: "creator", arg: "site" }, opened.ctx), {
+    adapter: "creator",
+    key: "creator",
+    arg: "site",
+    ok: true,
+  });
+  assert.deepEqual(opened.log, ["creator:opened"]);
+
+  const blocked = fakeCtx(() => false);
+  assert.equal(execute({ action: "creator", arg: "site" }, blocked.ctx).key, "creator.blocked");
 });
 
 test("back with nothing in history reports failure instead of pretending", () => {
@@ -229,6 +287,7 @@ test("a trace never carries hidden reasoning fields", async () => {
     "input",
     "normalized",
     "path",
+    "kind",
     "rawReply",
     "provider",
     "model",
@@ -236,6 +295,10 @@ test("a trace never carries hidden reasoning fields", async () => {
     "parsed",
     "validation",
     "adapter",
+    "attempts",
+    "sources",
+    "retrieval",
+    "knowledgeMode",
     "outcome",
     "status",
   ];
