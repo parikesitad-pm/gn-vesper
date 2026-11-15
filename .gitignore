@@ -20,9 +20,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # env files (never commit real keys)
-.env
-.env.local
-.env.*.local
+# Ignore every env file Next.js may load, but keep the placeholder example.
+.env*
+!.env.example
 
 # vercel
 .vercel

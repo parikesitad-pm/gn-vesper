@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "description": "A standalone showcase of Vesper: a natural-language command interface living inside a small notch.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parikesitad-pm/gn-vesper.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "next dev",

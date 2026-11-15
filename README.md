@@ -9,6 +9,12 @@ validates it against an explicit allow-list, and runs one small demo action on t
 It is **not** a chatbot and **not** a portfolio. There is no chat history, no RAG, no document
 retrieval, and no general-purpose assistant. Vesper understands a *command*, not a conversation.
 
+[Repository](https://github.com/parikesitad-pm/gn-vesper) ·
+[How it works](#how-it-works) ·
+[Contributing](./CONTRIBUTING.md) ·
+[Security](./SECURITY.md) ·
+[MIT](./LICENSE)
+
 - **Demo Mode works with zero configuration.** No API key, no network — local deterministic rules
   answer the obvious lines.
 - **AI mode is optional and server-side.** If you add a key, unrecognised lines may be sent to a
@@ -42,13 +48,17 @@ through an `aria-live` region so it is not animation-dependent.
 
 ## Try it
 
+There is no hosted demo — the showcase runs locally in Demo Mode, with no API key and no network
+calls. You need **Node ≥ 22.6**.
+
 ```bash
 npm install
 npm run dev
 # open http://localhost:3000
 ```
 
-Then open the notch and try one of these (click a chip on the page, or type your own):
+Then open the notch with **⌘K / Ctrl+K** and try one of these (click a chip on the page, or type
+your own):
 
 ```
 Make it neon              Buat neon

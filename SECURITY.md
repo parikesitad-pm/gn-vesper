@@ -69,8 +69,10 @@ the process restarts.
 Please **do not** open a public issue for a security problem.
 
 Instead, use GitHub's private vulnerability reporting on this repository
-(**Security → Report a vulnerability**). If that is unavailable, contact the maintainer directly
-through the profile that owns the repository.
+(**Security → Report a vulnerability**, or
+[open a private advisory](https://github.com/parikesitad-pm/gn-vesper/security/advisories/new)).
+If that is unavailable, contact the maintainer directly through the profile that owns the
+repository.
 
 Please include: what you found, the smallest input or step that reproduces it, and the impact you
 believe it has. You will get an acknowledgement as soon as possible. Please give a reasonable window
