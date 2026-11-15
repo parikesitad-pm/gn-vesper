@@ -1,0 +1,166 @@
+/*
+ * Local design tokens for the showcase.
+ *
+ * These are rebuilt for this project on purpose: the reference notch lives in a large portfolio stylesheet, and
+ * the handover forbids importing it. The values below are the notch's own material — a dark translucent glass,
+ * a hairline border, one accent, one spring — expressed as this app's tokens. Tokyo Night is the base palette.
+ */
+
+:root {
+  --bg: #1a1b26;
+  --bg2: #16161e;
+  --bg3: #0f1017;
+  --hl: #292e42;
+  --line: #3b4261;
+  --fg: #c0caf5;
+  --dim: #8089b3;
+  --blue: #7aa2f7;
+  --cyan: #7dcfff;
+  --mag: #bb9af7;
+  --green: #9ece6a;
+  --orange: #ff9e64;
+  --red: #f7768e;
+  --yellow: #e0af68;
+  --onaccent: #16161e;
+
+  /* The notch's accent and its paper/ink pair. */
+  --accent: var(--mag);
+  --paper: var(--fg);
+  --ink: var(--bg);
+
+  --mono: var(--font-mono), ui-monospace, "JetBrains Mono", Menlo, monospace;
+  --sans: var(--font-sans), system-ui, "IBM Plex Sans", sans-serif;
+
+  /* The reference island's spring (a QML spring 4 / damping .3 baked into a linear() curve) with a sane fallback. */
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --glass: rgba(3, 5, 10, 0.72);
+  --glass-stroke: rgba(255, 255, 255, 0.14);
+  --radius: 26px;
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring: linear(
+      0, 0.028, 0.103, 0.209, 0.335, 0.469, 0.603, 0.728, 0.841, 0.938, 1.016, 1.077, 1.12, 1.147, 1.161, 1.162, 1.155, 1.141, 1.122,
+      1.101, 1.079, 1.058, 1.038, 1.02, 1.005, 0.994, 0.985, 0.979, 0.975, 0.974, 0.974, 0.975, 0.978, 0.981, 0.985, 0.988, 0.992, 0.995, 0.998, 1
+    );
+  }
+}
+
+/* Theme: light. Same notch, a paper surface. */
+[data-theme="light"] {
+  --bg: #f5f7ff;
+  --bg2: #e9edf9;
+  --bg3: #dfe4f4;
+  --hl: #dde2f2;
+  --line: #c3c9de;
+  --fg: #1a1b26;
+  --dim: #5b6382;
+  --mag: #7a4fd0;
+  --cyan: #0f7fa8;
+  --green: #3f8f4a;
+  --orange: #b06018;
+  --red: #c03a52;
+  --yellow: #9a6b00;
+  --onaccent: #ffffff;
+  --glass: rgba(247, 249, 255, 0.82);
+  --glass-stroke: rgba(0, 0, 0, 0.1);
+}
+
+/* Theme: neon. The same notch with a hotter accent, for the "make it neon" demo. */
+[data-theme="neon"] {
+  --bg: #05060e;
+  --bg2: #0a0b18;
+  --bg3: #03040a;
+  --hl: #131a33;
+  --line: #24325e;
+  --fg: #e6f6ff;
+  --dim: #7d8dc0;
+  --mag: #22e0ff;
+  --cyan: #ff3ad2;
+  --green: #5cffb1;
+  --orange: #ffb347;
+  --red: #ff5d7a;
+  --yellow: #ffe066;
+  --onaccent: #03040a;
+  --glass: rgba(2, 4, 12, 0.7);
+  --glass-stroke: rgba(34, 224, 255, 0.35);
+}
+
+/* Reduced motion, or the visitor pausing motion from the notch: no transitions, no keyframes. */
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 120px;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* A faint grid so the glass has something to sit on, as the reference's page does. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.14;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* A shared container for the page body, so sections line up under the notch. */
+.wrap {
+  width: min(780px, calc(100% - 32px));
+  margin-inline: auto;
+}

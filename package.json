@@ -1,0 +1,34 @@
+{
+  "name": "vesper-notch-showcase",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A standalone showcase of Vesper: a natural-language command interface living inside a small notch.",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "eval": "node --import tsx eval/run.ts",
+    "check": "npm run typecheck && npm run lint && npm test && npm run eval"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}

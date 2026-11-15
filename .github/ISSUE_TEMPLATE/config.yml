@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security issue
+    url: https://github.com/parikesitad-pm/gn-vesper/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue. See SECURITY.md.
+  - name: How the pipeline works
+    url: https://github.com/parikesitad-pm/gn-vesper/blob/main/README.md#how-it-works
+    about: Read the pipeline and allow-list explanation before filing a parsing bug.

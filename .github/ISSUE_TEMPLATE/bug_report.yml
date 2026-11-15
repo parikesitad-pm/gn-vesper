@@ -1,0 +1,74 @@
+name: Bug report
+description: Something in the notch, the pipeline, or the inspector is broken.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please keep it specific — the smallest reproduction is the most
+        useful thing you can give us.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the actual behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the notch with ⌘K
+        2. Type "..."
+        3. See ...
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode?
+      options:
+        - Demo Mode (no API key, local rules only)
+        - AI mode (a classifier key is configured)
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is it?
+      options:
+        - Notch UI / animation
+        - Intent parsing / rules
+        - Validation
+        - Action execution
+        - Intent inspector
+        - AI classifier / provider
+        - Accessibility / keyboard
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser + OS, and Node version if relevant.
+      placeholder: Firefox 128 / macOS 15, Node 22.6
+    validations:
+      required: false
+  - type: textarea
+    id: inspector
+    attributes:
+      label: Inspector output (if relevant)
+      description: Paste the trace the inspector showed. Do not paste any API key.
+      render: text
+    validations:
+      required: false

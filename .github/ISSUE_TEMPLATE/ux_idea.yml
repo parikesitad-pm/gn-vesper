@@ -1,0 +1,46 @@
+name: UX idea
+description: Feedback on the notch interaction, animation, accessibility, or the inspector.
+title: "[ux] "
+labels: ["ux"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The notch is the product, so feedback on how it feels matters. Please describe the
+        experience, not just the fix.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Discoverability (do people find the notch?)
+        - Expansion / collapse animation
+        - Glass material / visual design
+        - Mobile / responsive layout
+        - Keyboard and focus
+        - Reduced motion
+        - Intent inspector clarity
+        - Copy / status wording
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What did you notice?
+      description: What felt off, confusing, slow, or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would you try instead?
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Device / browser (if relevant)
+      placeholder: iPhone 15 / Safari, or desktop Chrome
+    validations:
+      required: false

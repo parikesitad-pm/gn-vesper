@@ -1,0 +1,59 @@
+name: New test phrase
+description: A phrase Vesper misunderstood, or one it should handle. The most useful contribution.
+title: "[phrase] "
+labels: ["phrase", "eval"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The most valuable feedback is a phrase that broke it. This template turns your phrase into
+        an eval case and, usually, a fix.
+  - type: input
+    id: phrase
+    attributes:
+      label: The exact phrase
+      description: Type it exactly as you did, including typos and punctuation.
+      placeholder: make it neonn
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - English
+        - Indonesian
+        - Mixed / other
+    validations:
+      required: true
+  - type: dropdown
+    id: expected
+    attributes:
+      label: What should it do?
+      description: Pick the closest intent. Choose "No action / ask me" if it is genuinely ambiguous.
+      options:
+        - "theme dark|light|neon"
+        - "language en|id"
+        - "navigate playground|architecture|feedback"
+        - "motion toggle"
+        - "back"
+        - "help"
+        - "handoff question"
+        - No action — this is ambiguous, Vesper should ask
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What did Vesper actually do?
+      description: Paste the inspector outcome, or describe the status line you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: variants
+    attributes:
+      label: Other phrasings that should mean the same thing
+      description: List any paraphrases, slang, typos, or language switches worth covering.
+      render: text
+    validations:
+      required: false

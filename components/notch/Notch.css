@@ -1,0 +1,296 @@
+/*
+ * The notch.
+ *
+ * One continuous glass surface, exactly like the reference: the compact bar and the tray it grows into are the
+ * same element, so the border, blur and shadow never break between them. The tray animates with
+ * `grid-template-rows: 0fr → 1fr`, which lets the surface take its content's real height with no measuring and
+ * no fixed magic numbers, while still running on the spring curve.
+ *
+ * Placement, material, radius and spring are lifted from the reference notch (Poni.css) and rebuilt here as
+ * local tokens; nothing is imported from the portfolio.
+ */
+
+.notch {
+  position: fixed;
+  top: 12px;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  z-index: 49;
+  width: min(780px, calc(100% - 24px));
+  overflow: hidden;
+  border: 1px solid var(--glass-stroke);
+  border-radius: var(--radius);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 var(--glass-stroke);
+  color: var(--paper);
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.02em;
+  transition: border-color 0.3s, width 0.5s var(--spring);
+}
+
+@media (max-width: 899px) {
+  .notch {
+    width: min(520px, calc(100% - 24px));
+  }
+}
+
+.notch[data-state="thinking"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.notch[data-state="error"] {
+  border-color: color-mix(in srgb, var(--red) 55%, transparent);
+}
+
+/* ---- the always-present row ---------------------------------------------------------------- */
+
+.notch-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding-inline: 18px;
+}
+
+.notch-face {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+}
+
+.vpx-body {
+  fill: color-mix(in srgb, var(--paper) 72%, transparent);
+}
+.vpx-eye {
+  fill: var(--ink);
+}
+.vpx-pupil,
+.vpx-mark {
+  fill: var(--accent);
+}
+
+.notch[data-face="think"] .notch-face {
+  animation: notch-hop 0.9s cubic-bezier(0.16, 1, 0.3, 1) infinite alternate;
+}
+.notch[data-face="oops"] .notch-face {
+  animation: notch-shake 0.4s ease-in-out 1;
+}
+
+/* The whole row is the opener at rest, so a visitor can click anywhere on it. */
+.notch-open {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.notch-open > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.notch-kbd {
+  margin-left: auto;
+  flex: none;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--paper) 18%, transparent);
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+}
+
+.notch-form {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.notch-prompt {
+  color: var(--accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.notch-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  caret-color: var(--accent);
+}
+.notch-input::placeholder {
+  color: color-mix(in srgb, var(--paper) 45%, transparent);
+}
+.notch-input:focus-visible {
+  outline: 0;
+}
+
+.notch-x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+  font: 500 20px/1 var(--sans);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.notch-x:hover {
+  background: color-mix(in srgb, var(--paper) 12%, transparent);
+  color: var(--paper);
+}
+
+/* The result line, read aloud politely while it is on screen. */
+.notch-out {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* ---- the tray ------------------------------------------------------------------------------ */
+
+.notch-tray {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s var(--spring);
+}
+.notch[data-open="true"] .notch-tray {
+  grid-template-rows: 1fr;
+}
+
+.notch-tray-in {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.notch-tray-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px 16px;
+  border-top: 1px solid color-mix(in srgb, var(--paper) 8%, transparent);
+}
+
+.notch-tray-label {
+  margin-right: 4px;
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chip {
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 8%, transparent);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  transition: background 0.2s, border-color 0.2s, scale 0.15s;
+}
+.chip:hover {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: var(--accent);
+}
+.chip:active {
+  scale: 0.97;
+}
+.chip:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* The outcome line inside the tray, above the examples. */
+.notch-tray-out {
+  flex: 1 1 100%;
+  margin: 0 0 4px;
+  font-weight: 500;
+  white-space: normal;
+  text-align: left;
+  color: var(--paper);
+}
+.notch-tray-out[data-state="error"] {
+  color: var(--red);
+}
+.notch-tray-out[data-state="handoff"] {
+  color: var(--yellow);
+}
+
+/* Available to assistive tech, not drawn. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes notch-hop {
+  from {
+    translate: 0 2px;
+    rotate: -6deg;
+  }
+  to {
+    translate: 0 -3px;
+    rotate: 6deg;
+  }
+}
+@keyframes notch-shake {
+  25% {
+    translate: -2px 0;
+  }
+  75% {
+    translate: 2px 0;
+  }
+}
+
+@media (max-width: 699px) {
+  .notch-main {
+    padding-inline: 14px;
+    gap: 10px;
+  }
+  .notch-tray-body {
+    padding-inline: 14px;
+  }
+}
