@@ -1,6 +1,6 @@
 {
   "name": "vesper-notch-showcase",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "A standalone showcase of Vesper: a natural-language command interface living inside a small notch.",
   "license": "MIT",
@@ -18,17 +18,25 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "eval": "node --import tsx eval/run.ts",
     "eval:rag": "node --import tsx eval/rag.ts",
-    "check": "npm run typecheck && npm run lint && npm test && npm run eval"
+    "check": "npm run typecheck && npm run lint && npm test && npm run eval",
+    "test:ui": "node scripts/verify-ui.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.1",
+    "lenis": "^1.3.27",
     "next": "16.4.6",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "three": "^0.187.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tsx": "^4.23.15",

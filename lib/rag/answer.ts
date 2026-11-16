@@ -32,7 +32,7 @@ export class KnowledgeUnavailableError extends Error {
 }
 
 const isIndonesian = (s: string): boolean =>
-  /\b(siapa|apa|bagaimana|gimana|kenapa|mengapa|kapan|dimana|di mana|berapa|apakah|bisa|bisakah|tolong|jelaskan|ceritakan|jasa|pekerjaan|pengalaman|keahlian|proyek|projek|kontak|hubungi|tinggal|tinggalnya|dimana)\b/i.test(
+  /\b(siapa|apa|beda(?:nya)?|perbedaan(?:nya)?|bagaimana|gimana|kenapa|mengapa|kapan|dimana|di mana|berapa|apakah|bisa|bisakah|tolong|jelaskan|ceritakan|jasa|pekerjaan|pengalaman|keahlian|proyek|projek|kontak|hubungi|tinggal|tinggalnya|dimana)\b/i.test(
     s,
   );
 
@@ -48,6 +48,10 @@ const VESPER_IDENTITY: Record<IdentityKind, { en: string; id: string }> = {
   "is-creator": {
     en: `No — ${CREATOR.handle} (${CREATOR.name}) is the human creator. I'm ${VESPER.name} (${VESPER.id}), the interface he built.`,
     id: `Bukan — ${CREATOR.handle} (${CREATOR.name}) adalah manusia pembuatnya. Saya ${VESPER.name} (${VESPER.id}), antarmuka yang ia buat.`,
+  },
+  "compare-owl": {
+    en: `${VESPER.name} (${VESPER.id}) turns a single command into a validated interface action, or answers a creator question with public sources. ${OWL.name} (${OWL.id}) is a separate assistant for multi-turn conversation and deeper technical help. Both were created by ${CREATOR.handle}. Vesper has no conversation memory or live Owl connection.`,
+    id: `${VESPER.name} (${VESPER.id}) mengubah satu perintah menjadi aksi antarmuka yang tervalidasi, atau menjawab pertanyaan pembuat dengan sumber publik. ${OWL.name} (${OWL.id}) adalah asisten terpisah untuk percakapan berkelanjutan dan bantuan teknis yang lebih dalam. Keduanya dibuat oleh ${CREATOR.handle}. Vesper tidak menyimpan riwayat percakapan dan tidak terhubung langsung ke Owl.`,
   },
   "is-owl": {
     en: `No. I'm ${VESPER.name} (${VESPER.id}), the living notch and natural-language interface. ${OWL.name} (${OWL.id}) is a separate conversational assistant created by ${CREATOR.handle}.`,
@@ -144,13 +148,36 @@ function unsupportedAnswer(question: string): KnowledgeAnswer {
   };
 }
 
+/** Models write grouped citations ("[1, 3]", "[1-3]"); expand them so no cited page drops out of `sources`. */
+function expandCitations(text: string): string {
+  return text.replace(/\[(\d+(?:\s*[,–—-]\s*\d+)*)\]/g, (_whole, group: string) => {
+    const numbers: number[] = [];
+    for (const part of group.split(/\s*,\s*/)) {
+      const range = /^(\d+)\s*[-–—]\s*(\d+)$/.exec(part.trim());
+      if (range) {
+        const first = Number(range[1]);
+        const last = Number(range[2]);
+        // Bounded so a malformed giant range cannot inflate the answer.
+        if (first <= last && last - first <= 20) {
+          for (let n = first; n <= last; n += 1) numbers.push(n);
+        }
+        continue;
+      }
+      if (/^\d+$/.test(part.trim())) numbers.push(Number(part.trim()));
+    }
+    return numbers.map((n) => `[${n}]`).join(" ");
+  });
+}
+
 /** Keep a model reply within the observable contract: plain text, valid citations only, bounded length. */
 export function sanitizeAnswer(text: string, hitCount: number): string {
-  let clean = text
+  const normalized = text
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/[`*#>]/g, "")
     .replace(/^\s*answer\s*:\s*/i, "")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, " ");
+
+  let clean = expandCitations(normalized)
     .replace(/\[(\d+)\]/g, (whole, n: string) => {
       const index = Number(n);
       return index >= 1 && index <= hitCount ? whole : "";

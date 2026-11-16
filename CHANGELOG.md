@@ -7,6 +7,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-16
+
+### Added
+
+- GSAP and ScrollTrigger presentation motion, Lenis scrolling, and a procedural Three.js vessel with pointer response.
+- A bilingual inline command console with ACT/KNOW examples, output, citations, and theme controls.
+- A Vesper icon that opens the command island on hover, click, or Command/Super+K / Ctrl+K.
+- Pause, reduced-motion, off-screen rendering suspension, WebGL fallback, and resource cleanup.
+
+### Changed
+
+- Replaced Tokyo Night with Dracula across surfaces, alternate themes, lighting, and pixel assets.
+- Split page presentation into hero, command lab, architecture, and vessel organisms; moved the controller into a hook.
+
+### Fixed
+
+- Casual Vesper/Owl comparison questions now route to a deterministic identity answer.
+- Superseded classification and knowledge requests cannot overwrite newer input results.
+
 ## [0.2.0] — 2026-11-15
 
 The contextual AI interface release: Vesper now KNOWS as well as ACTS, without becoming a chatbot.

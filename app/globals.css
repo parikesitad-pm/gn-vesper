@@ -3,88 +3,80 @@
  *
  * These are rebuilt for this project on purpose: the reference notch lives in a large portfolio stylesheet, and
  * the handover forbids importing it. The values below are the notch's own material — a dark translucent glass,
- * a hairline border, one accent, one spring — expressed as this app's tokens. Tokyo Night is the base palette.
+ * a hairline border, one accent, one spring — expressed as this app's tokens. Dracula is the base palette.
  */
 
 :root {
-  --bg: #1a1b26;
-  --bg2: #16161e;
-  --bg3: #0f1017;
-  --hl: #292e42;
-  --line: #3b4261;
-  --fg: #c0caf5;
-  --dim: #8089b3;
-  --blue: #7aa2f7;
-  --cyan: #7dcfff;
-  --mag: #bb9af7;
-  --green: #9ece6a;
-  --orange: #ff9e64;
-  --red: #f7768e;
-  --yellow: #e0af68;
-  --onaccent: #16161e;
+  --bg: #211b1d;
+  --bg2: #191416;
+  --bg3: #120e10;
+  --hl: #33272b;
+  --line: #554047;
+  --fg: #f8f8f2;
+  --dim: #c1b3b7;
+  --blue: #ff5555;
+  --cyan: #8be9fd;
+  --mag: #ff5555;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+  --onaccent: #191416;
 
   /* The notch's accent and its paper/ink pair. */
   --accent: var(--mag);
   --paper: var(--fg);
   --ink: var(--bg);
 
-  --mono: var(--font-mono), ui-monospace, "JetBrains Mono", Menlo, monospace;
-  --sans: var(--font-sans), system-ui, "IBM Plex Sans", sans-serif;
+  --mono: var(--font-mono, "JetBrains Mono"), ui-monospace, "JetBrains Mono", Menlo, monospace;
+  --sans: var(--font-sans, "IBM Plex Sans"), system-ui, "IBM Plex Sans", sans-serif;
 
-  /* The reference island's spring (a QML spring 4 / damping .3 baked into a linear() curve) with a sane fallback. */
+  /* Shared timing for short interface transitions. */
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --glass: rgba(3, 5, 10, 0.72);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --glass: rgba(25, 20, 22, 0.94);
   --glass-stroke: rgba(255, 255, 255, 0.14);
   --radius: 26px;
 }
 
-@supports (transition-timing-function: linear(0, 1)) {
-  :root {
-    --spring: linear(
-      0, 0.028, 0.103, 0.209, 0.335, 0.469, 0.603, 0.728, 0.841, 0.938, 1.016, 1.077, 1.12, 1.147, 1.161, 1.162, 1.155, 1.141, 1.122,
-      1.101, 1.079, 1.058, 1.038, 1.02, 1.005, 0.994, 0.985, 0.979, 0.975, 0.974, 0.974, 0.975, 0.978, 0.981, 0.985, 0.988, 0.992, 0.995, 0.998, 1
-    );
-  }
-}
-
 /* Theme: light. Same notch, a paper surface. */
 [data-theme="light"] {
-  --bg: #f5f7ff;
-  --bg2: #e9edf9;
-  --bg3: #dfe4f4;
-  --hl: #dde2f2;
-  --line: #c3c9de;
-  --fg: #1a1b26;
-  --dim: #5b6382;
-  --mag: #7a4fd0;
-  --cyan: #0f7fa8;
-  --green: #3f8f4a;
+  --bg: #f8f8f2;
+  --bg2: #f0e9e7;
+  --bg3: #e7dcd9;
+  --hl: #ecdfdc;
+  --line: #cbb9b5;
+  --fg: #211b1d;
+  --dim: #665152;
+  --mag: #b42332;
+  --cyan: #17667a;
+  --green: #28783c;
   --orange: #b06018;
   --red: #c03a52;
   --yellow: #9a6b00;
   --onaccent: #ffffff;
-  --glass: rgba(247, 249, 255, 0.82);
+  --glass: rgba(248, 245, 242, 0.94);
   --glass-stroke: rgba(0, 0, 0, 0.1);
 }
 
 /* Theme: neon. The same notch with a hotter accent, for the "make it neon" demo. */
 [data-theme="neon"] {
-  --bg: #05060e;
-  --bg2: #0a0b18;
-  --bg3: #03040a;
-  --hl: #131a33;
-  --line: #24325e;
-  --fg: #e6f6ff;
-  --dim: #7d8dc0;
-  --mag: #22e0ff;
-  --cyan: #ff3ad2;
-  --green: #5cffb1;
-  --orange: #ffb347;
-  --red: #ff5d7a;
-  --yellow: #ffe066;
-  --onaccent: #03040a;
-  --glass: rgba(2, 4, 12, 0.7);
-  --glass-stroke: rgba(34, 224, 255, 0.35);
+  --bg: #180d10;
+  --bg2: #241216;
+  --bg3: #10080b;
+  --hl: #3d1b23;
+  --line: #71343f;
+  --fg: #f8f8f2;
+  --dim: #d4b7bd;
+  --mag: #ff3038;
+  --cyan: #8be9fd;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+  --onaccent: #10080b;
+  --glass: rgba(24, 13, 16, 0.94);
+  --glass-stroke: rgba(255, 48, 56, 0.35);
 }
 
 /* Reduced motion, or the visitor pausing motion from the notch: no transitions, no keyframes. */
@@ -119,6 +111,8 @@
 
 html,
 body {
+  --sans: var(--font-sans, "IBM Plex Sans"), system-ui, sans-serif;
+  --mono: var(--font-mono, "JetBrains Mono"), ui-monospace, Menlo, monospace;
   margin: 0;
   padding: 0;
 }
@@ -134,20 +128,9 @@ body {
   color: var(--fg);
   font: 16px/1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
-  transition: background 0.4s ease, color 0.4s ease;
+  transition: none;
 }
 
-/* A faint grid so the glass has something to sit on, as the reference's page does. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 64px 64px;
-  opacity: 0.14;
-  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
-}
 
 a {
   color: var(--accent);
@@ -161,7 +144,7 @@ a {
 
 /* A shared container for the page body, so sections line up under the notch. */
 .wrap {
-  width: min(780px, calc(100% - 32px));
+  width: min(1240px, calc(100% - 96px));
   margin-inline: auto;
 }
 
@@ -176,4 +159,17 @@ a {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+::selection { background: var(--accent); color: var(--onaccent); }
+html { scrollbar-width: thin; scrollbar-color: var(--line) var(--bg); }
+button, input { font-family: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+a { text-underline-offset: 4px; }
+@media (max-width: 850px) { .wrap { width: calc(100% - 64px); } }
+@media (max-width: 600px) { .wrap { width: calc(100% - 40px); } }
+:where(input, button, a, select, [tabindex]) { scroll-margin-block: 120px 24px; }
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight; }
+  button, input, select { border: 1px solid ButtonText; }
 }

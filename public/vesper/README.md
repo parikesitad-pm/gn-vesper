@@ -1,6 +1,6 @@
 # Vesper faces
 
-The four faces Vesper shows in the notch are the **approved originals**:
+The four faces retain the approved pixel artwork, recolored to the Dracula palette for version 0.3.0:
 
 | State | File | Used when |
 | --- | --- | --- |

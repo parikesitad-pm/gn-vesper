@@ -152,6 +152,23 @@ test("invalid citations and markdown are stripped from a model answer", () => {
   assert.equal(sanitizeAnswer("Answer: plain text", 1), "plain text");
 });
 
+test("grouped and ranged citations keep every page the answer cites", async () => {
+  assert.equal(sanitizeAnswer("Both [1, 3].", 3), "Both [1] [3].");
+  assert.equal(sanitizeAnswer("Range [1-3].", 3), "Range [1] [2] [3].");
+  assert.equal(sanitizeAnswer("Out of range [2, 9].", 3), "Out of range [2].");
+
+  const result = await answerQuestion(
+    "What does dap_ build?",
+    {},
+    { hits: CHUNKS.map((chunk) => ({ ...chunk, score: 1 })), chain: [fakeProvider("He builds web apps [1, 3].")] },
+  );
+  assert.equal(result.mode, "grounded");
+  assert.deepEqual(
+    result.sources.map((s) => s.url),
+    [CHUNKS[0]!.url, CHUNKS[2]!.url],
+  );
+});
+
 test("an insufficient context reply becomes an honest not-on-record answer", async () => {
   const hits = search(buildIndex(CHUNKS), "Where did dap_ study?");
   const result = await answerQuestion(

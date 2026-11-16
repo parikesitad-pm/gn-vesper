@@ -169,3 +169,28 @@ test("identity recognition does not swallow unrelated questions", () => {
   assert.equal(identityIntent("change the theme"), null);
   assert.equal(identityIntent("how do I go back?"), null);
 });
+
+test("Owl comparisons answer locally in English and casual Indonesian", async () => {
+  const questions = [
+    "apa bedanya dia sama owl",
+    "apa bedanya kamu sama owl?",
+    "bedanya sama owl?",
+    "Vesper beda apa dengan Owl?",
+    "what is the difference between you and Owl?",
+    "how are you different from Owl?",
+    "compare Vesper and Owl",
+  ];
+  for (const question of questions) {
+    assert.equal(identityIntent(question), "compare-owl", question);
+    const result = await resolve(question, DEMO);
+    assert.equal(result.intent, null, question);
+    assert.ok(result.knowledge, question);
+    const response = await answerQuestion(question, {});
+    assert.equal(response.mode, "identity", question);
+    assert.equal(response.provider, "local", question);
+    assert.match(response.answer, /GN-013/);
+    assert.match(response.answer, /GN-011/);
+  }
+  assert.match(answer(questions[0]!).answer, /percakapan berkelanjutan/);
+  assert.equal(identityIntent("What is the difference between Owl and React?"), null);
+});

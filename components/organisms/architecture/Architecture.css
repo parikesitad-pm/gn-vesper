@@ -1,0 +1,18 @@
+.architecture { display: grid; grid-template-columns: 1fr 1.1fr; gap: 100px; align-items: start; }
+.architecture-heading { position: sticky; top: 120px; }
+.architecture h2 { margin-top: 24px; }
+.architecture-heading > p { max-width: 36ch; color: var(--dim); line-height: 1.8; }
+.route-key { display: flex; flex-direction: column; gap: 12px; color: var(--accent); margin-top: 32px; font: 11px var(--mono); }
+.route-key > :last-child { color: var(--cyan); }
+.route-key span > span { margin: 0 12px; color: var(--dim); }
+.pipeline { list-style: none; margin: 0; padding: 0; }
+.pipeline-step { display: grid; grid-template-columns: 40px 1fr; gap: 24px; }
+.pipeline-rail { display: flex; flex-direction: column; align-items: center; }
+.pipeline-node { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; font: 10px var(--mono); color: var(--accent); flex-shrink: 0; }
+.pipeline-track { width: 1px; flex: 1; background: var(--line); position: relative; min-height: 36px; }
+.pipeline-track-fill { display: block; position: absolute; inset: 0; background: var(--accent); }
+.pipeline-step:last-child .pipeline-track { visibility: hidden; }
+.pipeline-content { padding: 4px 0 36px; }
+.pipeline-content h3 { margin: 0 0 12px; font-size: 21px; font-weight: 500; }
+.pipeline-content p { margin: 0; color: var(--dim); font-size: 14px; line-height: 1.8; }
+@media (max-width: 800px) { .architecture { grid-template-columns: 1fr; gap: 40px; } .architecture-heading { position: static; } .architecture-heading > p { max-width: 55ch; } .route-key { flex-direction: row; gap: 32px; } .pipeline-step { gap: 20px; } }

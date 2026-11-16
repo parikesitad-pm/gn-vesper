@@ -140,7 +140,9 @@
   color: color-mix(in srgb, var(--paper) 45%, transparent);
 }
 .notch-input:focus-visible {
-  outline: 0;
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .notch-x {
@@ -271,3 +273,17 @@
     padding-inline: 14px;
   }
 }
+
+/* The resting control is Vesper itself; the command surface exists only when opened. */
+.notch { top: 24px; width: 48px; border: 0; border-radius: 12px; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; transition: none; }
+.notch-main { height: 48px; padding: 0; justify-content: center; }
+.notch-open { justify-content: center; width: 48px; height: 48px; flex: none; border-radius: 10px; transition: transform 150ms var(--ease-out); }
+.notch-open:hover { transform: translateY(-2px) rotate(-5deg); }
+.notch-open:active { transform: scale(.96); }
+.notch[data-open="true"] { width: min(720px, calc(100% - 24px)); border: 1px solid var(--glass-stroke); background: var(--glass); border-radius: 14px; box-shadow: 0 16px 48px -12px #0006; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); }
+.notch[data-open="true"] .notch-main { height: 56px; justify-content: initial; padding-inline: 16px; }
+.notch-tray { transition: none; }
+.notch[data-open="false"] .notch-tray { display: none; }
+.notch[data-open="true"] .notch-tray { grid-template-rows: 1fr; }
+.notch .chip { border-radius: 5px; }
+@media (max-width: 600px) { .notch { top: 18px; } }

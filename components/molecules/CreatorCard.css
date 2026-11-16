@@ -8,7 +8,7 @@
   color: inherit;
 }
 .creator-kicker {
-  color: color-mix(in srgb, currentColor 60%, transparent);
+  color: var(--dim);
   font: 600 11px/1.5 var(--mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;

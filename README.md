@@ -45,9 +45,21 @@ Gemini and Groq are infrastructure Vesper may use internally; neither is Vesper,
 
 ---
 
+## Usage documentation
+
+Open `/docs` for EN/ID usage, keyboard controls, answer provenance, local setup, and integration guidance. KNOW results show the actual provider/model next to the answer; deterministic identity and extractive results are marked as local with no AI model.
+
+## Animated interface
+
+The default palette is Dracula. A single procedural Three.js vessel follows the pointer and responds to scroll. GSAP sequences the introduction and pipeline, with Lenis attached to the same ticker. Motion can be paused and respects the system reduced-motion setting; the scene suspends rendering off-screen and releases its GPU resources on unmount.
+
+At rest the header shows only Vesper's icon. Hover or click it, or press **Command/Super+K / Ctrl+K**, to open the command island. **Escape** closes it. The inline ACT/KNOW console provides editable input, example phrases, output, citations, and Dracula/light/neon controls.
+
+Run `npm run test:ui` with the dev server already running and Google Chrome installed. It checks the primary flows, the Owl comparison regression, four viewport widths, dark/light accessibility, reduced motion, and a 4× CPU-throttled frame sample. Screenshots go to `/tmp/vesper-qa`; override the preview URL with `PREVIEW_URL` and the output directory with `QA_OUTPUT`.
+
 ## The idea
 
-The notch is the product. At rest it is quiet and unobtrusive; when you open it, the compact island expands
+The notch is the product. At rest only the Vesper icon is visible; when you open it, the compact island expands
 downward into its tray as **one continuous glass surface**, not a detached modal. It stays top-centred,
 springs open and closed, and behaves the same at phone widths.
 

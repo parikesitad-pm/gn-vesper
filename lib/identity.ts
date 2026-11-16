@@ -32,6 +32,7 @@ export type IdentityKind =
   | "is-creator"
   | "is-owl"
   | "about-owl"
+  | "compare-owl"
   | "provider"
   | "replace-owl"
   | "meet-owl";
@@ -44,6 +45,12 @@ const PROVIDER_NAME = /\b(gemini|groq|openai|mistral)\b/;
 const PROVIDER_WORD = /\b(provider|providers|model|models|llm)\b/;
 const CREATION_WORD = /\b(create[ds]?|created|creating|made|make|built|build|author(?:ed)?|pembuat|pencipta|dibuat|membuat|menciptakan)\b/;
 
+const asksCompareOwl = (s: string) =>
+  has(s, OWL_WORD) &&
+  has(s, /\b(differences?|different|compare|comparison|versus|vs|beda(?:nya)?|berbeda|perbedaan(?:nya)?|banding(?:kan)?|dibanding(?:kan)?)\b/) &&
+  (has(s, /\b(you|your|vesper|notch|kamu|kau|lu|lo|elu|dia|ini)\b/) ||
+    /^(?:apa\s+)?(?:beda(?:nya)?|perbedaan(?:nya)?)\s+(?:sama|dengan)\s+owl[?!.]*$/.test(s));
+
 /** "Can you replace Owl?" — a comparison, not a capability claim. */
 const asksReplaceOwl = (s: string) =>
   has(s, OWL_WORD) && has(s, /\b(replace|replaces|replacement|instead of|better than|take over|gantikan|menggantikan|pengganti|lebih baik)\b/);
@@ -55,7 +62,7 @@ const asksMeetOwl = (s: string) =>
 /** "Who is Owl?" / "What is Owl?" / "Who created Owl?" — an identity question about Owl. */
 const asksAboutOwl = (s: string) =>
   has(s, OWL_WORD) &&
-  (has(s, /\b(who is|who'?s|what is|what'?s|tell me about|explain|describe|siapa|apa itu|tentang|jelaskan|ceritakan)\b/) ||
+  (has(s, /\b(who is|who'?s|what is|what'?s|tell me about|explain|describe|siapa|apa itu|tentang|jelaskan|ceritakan)\s+(?:the\s+)?owl\b|\bowl\s+(?:itu\s+)?(?:apa|siapa)\b/) ||
     has(s, /\b(created|made|built|creator|maker|author|pembuat|pencipta)\b/));
 
 /** "Are you Owl?" / "Apakah kamu Owl?" — a direct claim to be Owl. */
@@ -104,6 +111,7 @@ export function identityIntent(question: string): IdentityKind | null {
   const s = normalize(question).toLowerCase();
   if (!s) return null;
 
+  if (asksCompareOwl(s)) return "compare-owl";
   if (asksReplaceOwl(s)) return "replace-owl";
   if (asksMeetOwl(s)) return "meet-owl";
   if (asksAboutOwl(s)) return "about-owl";

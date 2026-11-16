@@ -8,7 +8,7 @@
 }
 .source-list-label {
   margin-right: 2px;
-  color: color-mix(in srgb, currentColor 55%, transparent);
+  color: var(--dim);
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;

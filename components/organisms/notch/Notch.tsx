@@ -1,9 +1,12 @@
 "use client";
 
-import { type RefObject } from "react";
+import { type RefObject, useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap/runtime";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Chip } from "@/components/atoms/Chip";
 import { VesperFace, type FaceState } from "@/components/atoms/VesperFace";
 import { CreatorCard } from "@/components/molecules/CreatorCard";
+import { AnswerOrigin } from "@/components/molecules/answer-origin/AnswerOrigin";
 import { SourceList } from "@/components/molecules/SourceList";
 import type { Copy } from "@/lib/copy";
 import type { KnowledgeAnswer } from "@/lib/rag/types";
@@ -14,6 +17,7 @@ export type NotchState = "idle" | "input" | "thinking" | "result" | "answer" | "
 
 export type NotchProps = {
   open: boolean;
+  language: import("@/lib/intent/types").Language;
   state: NotchState;
   face: FaceState;
   /** The line shown in the row at rest and in the tray while open. */
@@ -22,6 +26,7 @@ export type NotchProps = {
   onInput: (value: string) => void;
   onSubmit: (value: string) => void;
   onOpen: () => void;
+  onHover: (hovered: boolean) => void;
   onClose: () => void;
   examples: string[];
   onExample: (value: string) => void;
@@ -34,6 +39,7 @@ export type NotchProps = {
 
 export function Notch({
   open,
+  language,
   state,
   face,
   statusText,
@@ -41,6 +47,7 @@ export function Notch({
   onInput,
   onSubmit,
   onOpen,
+  onHover,
   onClose,
   examples,
   onExample,
@@ -50,17 +57,24 @@ export function Notch({
   knowledge,
 }: NotchProps) {
   const answering = !!knowledge && state === "answer";
+  const shell = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  useGSAP(() => {
+    if (!open || reduce || document.documentElement.dataset.motion === "off") return;
+    gsap.from(".notch-form, .notch-x, .notch-tray-body", { opacity: 0, y: -6, duration: 0.22, stagger: 0.025, ease: "expo.out" });
+  }, { scope: shell, dependencies: [open, reduce], revertOnUpdate: true });
 
   return (
-    <div className="notch" data-open={open} data-state={state} data-face={face}>
+    <div ref={shell} className="notch" onPointerEnter={(event) => { if (event.pointerType === "mouse") onHover(true); }} onPointerLeave={() => onHover(false)} onKeyDown={(event) => { if (event.key === "Escape") onClose(); }} data-open={open} data-state={state} data-face={face}>
       <div className="notch-main">
-        <span className="notch-face">
+        {open && <span className="notch-face">
           <VesperFace state={face} />
-        </span>
+        </span>}
 
         {open ? (
           <form
             className="notch-form"
+            onPointerDown={onOpen}
             onSubmit={(e) => {
               e.preventDefault();
               onSubmit(input);
@@ -75,6 +89,7 @@ export function Notch({
               name="q"
               type="text"
               value={input}
+              onFocus={onOpen}
               onChange={(e) => onInput(e.target.value)}
               placeholder={copy.placeholder}
               aria-label={copy.notchHint}
@@ -88,9 +103,8 @@ export function Notch({
             </Chip>
           </form>
         ) : (
-          <button type="button" className="notch-open" onClick={onOpen} aria-expanded={false}>
-            <span>{statusText || copy.notchHint}</span>
-            <kbd className="notch-kbd">{copy.shortcut}</kbd>
+          <button type="button" className="notch-open" onClick={onOpen} aria-expanded={false} aria-controls="vesper-tray" aria-label={copy.notchHint} title={`${copy.notchHint} · ${copy.shortcut}`}>
+            <VesperFace state={face} size={36} />
           </button>
         )}
 
@@ -101,11 +115,12 @@ export function Notch({
         )}
       </div>
 
-      <div className="notch-tray">
+      <div id="vesper-tray" className="notch-tray" inert={!open}>
         <div className="notch-tray-in">
           <div className="notch-tray-body">
             {answering ? (
               <div className="notch-know">
+                <AnswerOrigin answer={knowledge} language={language} />
                 <p className="notch-answer">{knowledge.answer}</p>
                 <SourceList sources={knowledge.sources} label={copy.knowledge.sources} />
                 <CreatorCard copy={copy} compact />
@@ -122,7 +137,7 @@ export function Notch({
 
             <span className="notch-tray-label">{copy.examplesLabel}</span>
             {examples.map((ex) => (
-              <Chip key={ex} onClick={() => onExample(ex)}>
+              <Chip key={ex} disabled={busy} onClick={() => onExample(ex)}>
                 {ex}
               </Chip>
             ))}

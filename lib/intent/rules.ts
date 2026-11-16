@@ -62,7 +62,7 @@ type Match<T> = [RegExp, T][];
 const pick = <T>(s: string, list: Match<T>): T | undefined => list.find(([re]) => re.test(s))?.[1];
 
 const THEMES: Match<"dark" | "light" | "neon"> = [
-  [/\b(dark|gelap|malam)\b/, "dark"],
+  [/\b(dark|dracula|gelap|malam)\b/, "dark"],
   [/\b(light|terang|siang)\b/, "light"],
   [/\bneon\b/, "neon"],
 ];
