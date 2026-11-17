@@ -63,7 +63,7 @@ async function fetchPublicText(url: string): Promise<string> {
 /** `- [about.md](https://d-ap.my.id/about): ...` → `about.md` → URL. */
 export function parsePageMap(llmsTxt: string): Map<string, string> {
   const map = new Map<string, string>();
-  const link = /\[([^\]]+)\]\((https:\/\/d-ap\.my\.id[^)\s]*)\)/g;
+  const link = /\[([^\[\]\r\n]{1,200})\]\((https:\/\/d-ap\.my\.id[^)\s]{0,2048})\)/g;
   for (const match of llmsTxt.matchAll(link)) {
     const label = match[1]?.trim();
     const url = match[2]?.trim();
@@ -75,7 +75,7 @@ export function parsePageMap(llmsTxt: string): Map<string, string> {
 /** The one-line public description from `llms.txt`, used as a page summary in retrieval. */
 export function parsePageDescriptions(llmsTxt: string): Map<string, string> {
   const map = new Map<string, string>();
-  const line = /^-\s*\[([^\]]+)\]\((https:\/\/d-ap\.my\.id[^)\s]*)\):\s*(.+?)\s*$/gm;
+  const line = /^-\s*\[([^\[\]\r\n]{1,200})\]\((https:\/\/d-ap\.my\.id[^)\s]{0,2048})\):\s*(.+)$/gm;
   for (const match of llmsTxt.matchAll(line)) {
     const label = match[1]?.trim();
     const description = match[3]?.trim();
@@ -133,7 +133,7 @@ export function parseCorpus(fullText: string, llmsTxt: string): Chunk[] {
   let current: { heading: string; body: string[] } = { heading: "Profile", body: [] };
 
   for (const line of lines) {
-    const heading = /^##\s+(.+?)\s*$/.exec(line);
+    const heading = /^##\s+(.+)$/.exec(line);
     if (heading) {
       if (current.body.join("").trim()) sections.push(current);
       current = { heading: heading[1]!.trim(), body: [] };

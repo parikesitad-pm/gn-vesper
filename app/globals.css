@@ -1,3 +1,4 @@
+@import "lenis/dist/lenis.css";
 /*
  * Local design tokens for the showcase.
  *
@@ -178,3 +179,5 @@ a { text-underline-offset: 4px; }
 .request-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; font: 12px/1.5 var(--mono); }
 .request-controls:empty { display: none; }
 .request-controls .chip { min-height: 44px; }
+
+html.lenis.lenis-smooth { scroll-behavior: auto; }

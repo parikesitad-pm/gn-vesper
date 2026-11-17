@@ -116,7 +116,7 @@ const retrievalInfo = (hits: RetrievalHit[]) =>
 /** Demo Mode: quote the best public chunk instead of pretending a model wrote an answer. */
 export function extractiveAnswer(question: string, hits: RetrievalHit[], attempts: ProviderAttempt[] = []): KnowledgeAnswer {
   const top = hits[0]!;
-  const sentences = top.text.replace(/\s+/g, " ").match(/[^.!?]+[.!?]+/g) ?? [top.text];
+  const sentences = top.text.replace(/\s+/g, " ").match(/[^.!?]+(?:[.!?]+|$)/g) ?? [top.text];
   let excerpt = sentences.slice(0, 3).join(" ").trim();
   if (excerpt.length > 420) excerpt = `${excerpt.slice(0, 417).trimEnd()}…`;
 
@@ -150,9 +150,9 @@ function unsupportedAnswer(question: string): KnowledgeAnswer {
 
 /** Models write grouped citations ("[1, 3]", "[1-3]"); expand them so no cited page drops out of `sources`. */
 function expandCitations(text: string): string {
-  return text.replace(/\[(\d+(?:\s*[,–—-]\s*\d+)*)\]/g, (_whole, group: string) => {
+  return text.replace(/\[([\d\s,–—-]{1,200})\]/g, (_whole, group: string) => {
     const numbers: number[] = [];
-    for (const part of group.split(/\s*,\s*/)) {
+    for (const part of group.split(",")) {
       const range = /^(\d+)\s*[-–—]\s*(\d+)$/.exec(part.trim());
       if (range) {
         const first = Number(range[1]);
@@ -182,7 +182,7 @@ export function sanitizeAnswer(text: string, hitCount: number): string {
       const index = Number(n);
       return index >= 1 && index <= hitCount ? whole : "";
     })
-    .replace(/\s+([.,!?])/g, "$1")
+    .replace(/ ([.,!?])/g, "$1")
     .trim();
 
   if (clean.length > 1200) {

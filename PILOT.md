@@ -10,9 +10,15 @@ Vesper (GN-013) is a compact natural-language interface for safe page actions an
 
 ## Current work
 
-Replace the presentation with an interactive Dracula experience using GSAP, ScrollTrigger, Lenis, and Three.js. Keep ACT/KNOW behavior, source links, bilingual copy, and the observable execution trace.
+Build the repository watcher inside the island, with a full inbox at `/vesper` and integration documentation at `/docs/github`. Keep ACT/KNOW behavior, the original Vesper character, source links, and the Dracula presentation.
 
 ## Decisions
+
+- 2026-11-17: Pilot authorized production deployment to Vercel. Target: `gn-vesper` in the creator's Vercel team; GitHub account features remain unavailable until server credentials and PostgreSQL are configured.
+
+- 2026-11-17: Pilot authorized completing repository watching, persistent account settings, PR/activity views, notifications, documentation, and environment examples before providing service keys. Public mode must work without keys; configured services require later live verification.
+
+- 2026-11-17: Pilot requested the personal_branding island interaction as the reference: continuous surface transition, no ×, Escape and outside click dismiss.
 
 - 2026-11-17: Pilot explicitly requires the shared footer on home and docs: `crafted by dap_ · a modula project · © <year>`, with the year supplied by the server.
 

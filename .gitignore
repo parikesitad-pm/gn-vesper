@@ -26,3 +26,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Vesper local watcher data
+/.vesper/

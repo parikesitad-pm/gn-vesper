@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type KeyboardEvent, useState } from "react";
 import { Arrow } from "@/components/atoms/Arrow";
 import { VesperFace, type FaceState } from "@/components/atoms/VesperFace";
 import { RequestControls, type RequestControlsProps } from "@/components/molecules/RequestControls";
@@ -17,6 +17,13 @@ export function CommandLab({ controls, text, language, busy, run, status, knowle
 }) {
   const [tab, setTab] = useState<"act" | "know">("act");
   const [draft, setDraft] = useState("");
+  const onTabKey = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? "act" : event.key === "End" ? "know" : tab === "act" ? "know" : "act";
+    setTab(next);
+    document.getElementById(`tab-${next}`)?.focus();
+  };
   const phrases = tab === "act" ? text.actions : text.questions;
   return <section id="playground" className="command-lab section-space">
     <div className="section-heading"><span className="section-index">01 / PLAYGROUND</span><h2>{text.labTitle}</h2><p>{text.labIntro}</p></div>
@@ -24,15 +31,9 @@ export function CommandLab({ controls, text, language, busy, run, status, knowle
       <div className="console-toolbar"><span className="console-file"><span className="status-dot" />vesper.intent</span><span className="console-mode">ACT / KNOW</span></div>
       <div className="console-body">
         <div className="console-workspace">
-          <div className="console-tabs" role="tablist" aria-label="Intent mode" onKeyDown={(event) => {
-            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-            event.preventDefault();
-            const next = event.key === "Home" ? "act" : event.key === "End" ? "know" : tab === "act" ? "know" : "act";
-            setTab(next);
-            document.getElementById(`tab-${next}`)?.focus();
-          }}>
-            <button role="tab" id="tab-act" tabIndex={tab === "act" ? 0 : -1} aria-selected={tab === "act"} aria-controls="intent-panel" onClick={() => setTab("act")}><span>ACT</span>{text.act}</button>
-            <button role="tab" id="tab-know" tabIndex={tab === "know" ? 0 : -1} aria-selected={tab === "know"} aria-controls="intent-panel" onClick={() => setTab("know")}><span>KNOW</span>{text.know}</button>
+          <div className="console-tabs" role="tablist" aria-label="Intent mode">
+            <button onKeyDown={onTabKey} role="tab" id="tab-act" tabIndex={tab === "act" ? 0 : -1} aria-selected={tab === "act"} aria-controls="intent-panel" onClick={() => setTab("act")}><span>ACT</span>{text.act}</button>
+            <button onKeyDown={onTabKey} role="tab" id="tab-know" tabIndex={tab === "know" ? 0 : -1} aria-selected={tab === "know"} aria-controls="intent-panel" onClick={() => setTab("know")}><span>KNOW</span>{text.know}</button>
           </div>
           <div id="intent-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
             <form className="console-form" onSubmit={(event) => { event.preventDefault(); if (!busy && draft.trim()) { void run(draft); setDraft(""); } }}>

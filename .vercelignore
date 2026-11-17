@@ -1,0 +1,7 @@
+.env*
+.vesper/
+.sonar-config.json
+tests/
+eval/
+scripts/
+*.tsbuildinfo

@@ -1,0 +1,13 @@
+.repo-island { width: 100%; min-width: 0; }
+.repo-island-commands { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.repo-island-tabs { display: flex; gap: 4px; flex-wrap: wrap; padding-block: 8px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.repo-island-tabs button, .repo-island-content button { min-height: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: 8px; color: var(--dim); background: none; font: 11px/1.5 var(--mono); cursor: pointer; }
+.repo-island-tabs button[aria-pressed="true"] { background: var(--bg); border-color: var(--line); color: var(--fg); }
+.repo-island-content form { display: flex; gap: 8px; margin-block: 12px; }
+.repo-island-content input { width: 100%; min-width: 0; min-height: 44px; padding: 10px; background: var(--bg3); border: 1px solid var(--line); color: var(--fg); border-radius: 6px; font: 12px var(--mono); }
+.repo-island-content form button { background: var(--accent); color: var(--onaccent); }
+.repo-island-content > a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--line); color: var(--fg); text-decoration: none; overflow-wrap: anywhere; }
+.repo-island-content small { display: block; color: var(--dim); margin-bottom: 4px; }
+.repo-island-content p { color: var(--dim); font: 12px/1.8 var(--sans); }
+.repo-island-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 12px; color: var(--dim); font: 10px var(--mono); }
+.repo-island-footer a { display: inline-flex; align-items: center; min-height: 44px; }

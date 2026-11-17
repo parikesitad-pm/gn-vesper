@@ -31,10 +31,12 @@ function loadEnvFile(name: string) {
   for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
-    const match = /^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(trimmed);
-    if (!match) continue;
-    const key = match[1]!;
-    let value = match[2]!.trim();
+    const assignment = trimmed.replace(/^export\s+/, "");
+    const separator = assignment.indexOf("=");
+    if (separator < 0) continue;
+    const key = assignment.slice(0, separator).trim();
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue;
+    let value = assignment.slice(separator + 1).trim();
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }

@@ -1,6 +1,12 @@
 # Vesper Notch
 
-> A compact glass notch that turns one line into a safe action — or an answer grounded in its creator's public site.
+> A repository inbox inside a command island, with a full workspace at `/vesper`.
+
+Paste a GitHub URL to watch a public repository without an API key. Vesper saves up to three public repositories in this browser, shows open pull requests, and detects changes while the page is open. Connect a GitHub App for private repositories, account persistence, signed webhook activity, and optional background browser notifications.
+
+Open `/docs/github` for GitHub App registration, permissions, API endpoints, storage requirements, notification limits, and the variables in `.env.example`. Provider and GitHub credentials remain server-side. PostgreSQL is required on Vercel; a persistent local directory supports one Node process during development.
+
+With a dev server running, `npm run test:repos` checks the repository UI, keyboard flow, four viewport widths, and automated WCAG rules. Run `npm run build` then `npm run test:github` for an isolated fixture test of OAuth, sessions, private PR access, account isolation, signed webhooks, restart persistence, and account deletion. Fixture tests do not verify real GitHub authorization, hosted database connectivity, or push delivery.
 
 Vesper is a small, standalone showcase of a **contextual AI interface** with two deliberately different jobs:
 
@@ -10,7 +16,7 @@ Vesper is a small, standalone showcase of a **contextual AI interface** with two
   retrieval from the public site [`d-ap.my.id`](https://d-ap.my.id). Every answer cites a public page, or
   says plainly that the public source does not record it.
 
-There is **no chat history**, no general-purpose assistant, no conversation memory, and no private data.
+The ACT/KNOW demo has **no chat history**, general-purpose assistant, or conversation memory. Its retrieval corpus contains public creator pages. The separate repository inbox can access private repositories after GitHub authorization.
 KNOW is a retrieval path over public pages, not a chatbot.
 
 Vesper is **Vesper** — `GN-013`, the living notch. It is one of three distinct entities in one creator

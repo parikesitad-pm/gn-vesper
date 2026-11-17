@@ -1,8 +1,10 @@
 "use client";
 
-import { type RefObject, useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap/runtime";
+import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap/runtime";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useRepositories } from "@/hooks/useRepositories";
+import { RepoIsland } from "@/components/molecules/repo-island/RepoIsland";
 import { Chip } from "@/components/atoms/Chip";
 import { VesperFace, type FaceState } from "@/components/atoms/VesperFace";
 import { CreatorCard } from "@/components/molecules/CreatorCard";
@@ -59,24 +61,52 @@ export function Notch({
   busy,
   knowledge,
 }: NotchProps) {
+  const { unread } = useRepositories();
   const answering = !!knowledge && state === "answer";
   const shell = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  useGSAP(() => {
-    if (!open || reduce || document.documentElement.dataset.motion === "off") return;
-    gsap.from(".notch-form, .notch-x, .notch-tray-body", { opacity: 0, y: -6, duration: 0.22, stagger: 0.025, ease: "expo.out" });
-  }, { scope: shell, dependencies: [open, reduce], revertOnUpdate: true });
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Element && !shell.current?.contains(target) && !target.closest(".hero-actions .btn, .vessel-target")) onClose();
+    };
+    document.addEventListener("pointerdown", outside);
+    return () => document.removeEventListener("pointerdown", outside);
+  }, [open, onClose]);
+  useLayoutEffect(() => {
+    const element = shell.current;
+    if (!element) return;
+    let observer: ResizeObserver;
+    const context = gsap.context(() => {
+      const material = element.querySelector(".notch-material");
+      const content = element.querySelectorAll(".notch-face, .notch-form, .notch-tray");
+      const duration = reduce || document.documentElement.dataset.motion === "off" ? 0 : open ? 0.32 : 0.22;
+      const draw = (width: number, height: number) => {
+        gsap.to(material, { scaleX: open ? 1 : 48 / width, scaleY: open ? 1 : 48 / height, opacity: open ? 1 : 0, duration, ease: "expo.out", overwrite: true });
+      };
+      gsap.to(content, { opacity: open ? 1 : 0, y: open ? 0 : -5, duration: duration * 0.7, delay: open ? 0.08 : 0, ease: "expo.out", overwrite: true });
+      observer = new ResizeObserver(([entry]) => draw(entry.contentRect.width, entry.contentRect.height));
+      observer.observe(element);
+    }, shell);
+    return () => {
+      observer?.disconnect();
+      // Preserve current transforms so interrupted transitions continue from their visible position.
+      context.kill(false);
+    };
+  }, [open, reduce]);
 
   return (
-    <div ref={shell} className="notch" onPointerEnter={(event) => { if (event.pointerType === "mouse") onHover(true); }} onPointerLeave={() => onHover(false)} onKeyDown={(event) => { if (event.key === "Escape") onClose(); }} data-open={open} data-state={state} data-face={face}>
+    <div ref={shell} className="notch" onPointerEnter={(event) => { if (event.pointerType === "mouse") onHover(true); }} onPointerLeave={() => onHover(false)} data-open={open} data-state={state} data-face={face}>
+      <div className="notch-material" aria-hidden="true" />
       <div className="notch-main">
-        {open && <span className="notch-face">
+        <span className="notch-face" inert={!open}>
           <VesperFace state={face} />
-        </span>}
+        </span>
 
-        {open ? (
+
           <form
-            className="notch-form"
+            className="notch-form" inert={!open}
             onPointerDown={onOpen}
             onSubmit={(e) => {
               e.preventDefault();
@@ -94,33 +124,27 @@ export function Notch({
               value={input}
               onFocus={onOpen}
               onChange={(e) => onInput(e.target.value)}
-              placeholder={copy.placeholder}
+              placeholder={language === "id" ? "Tanya atau perintah…" : "Ask or command…"}
               aria-label={copy.notchHint}
               autoComplete="off"
               spellCheck={false}
               maxLength={200}
               enterKeyHint="send"
             />
-            <Chip type="submit" disabled={busy || input.trim().length === 0}>
+            <Chip type="submit" aria-label={copy.run} disabled={busy || input.trim().length === 0}>
               {copy.run}
             </Chip>
           </form>
-        ) : (
-          <button type="button" className="notch-open" onClick={onOpen} aria-expanded={false} aria-controls="vesper-tray" aria-label={copy.notchHint} title={`${copy.notchHint} · ${copy.shortcut}`}>
+          <button type="button" className="notch-open" inert={open} onClick={onOpen} aria-expanded={open} aria-controls="vesper-tray" aria-label={copy.notchHint} title={`${copy.notchHint} · ${copy.shortcut}`}>
             <VesperFace state={face} size={36} />
+            {unread > 0 && <span className="notch-unread" aria-label={`${unread} unread repository updates`}>{unread > 9 ? "9+" : unread}</span>}
           </button>
-        )}
-
-        {open && (
-          <button type="button" className="notch-x" onClick={onClose} aria-label={copy.close}>
-            &times;
-          </button>
-        )}
+        <button type="button" className="notch-dismiss" inert={!open} onClick={onClose} aria-label={copy.close}><kbd>esc</kbd></button>
       </div>
 
-      <div id="vesper-tray" className="notch-tray" inert={!open}>
+      <div id="vesper-tray" className="notch-tray" data-lenis-prevent="" inert={!open}>
         <div className="notch-tray-in">
-          <div className="notch-tray-body">
+          <div className="notch-tray-body"><RepoIsland language={language}>
             {answering ? (
               <div className="notch-know">
                 <AnswerOrigin answer={knowledge} language={language} />
@@ -145,7 +169,7 @@ export function Notch({
                 {ex}
               </Chip>
             ))}
-          </div>
+          </RepoIsland></div>
         </div>
       </div>
 

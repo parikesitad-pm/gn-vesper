@@ -1,18 +1,35 @@
 import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { mkdir } from 'node:fs/promises';
+import { mkdtemp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-const output = process.env.QA_OUTPUT ?? '/tmp/vesper-qa';
-await mkdir(output, {recursive: true});
+const output = await mkdtemp(join(process.env.QA_OUTPUT ?? tmpdir(), 'vesper-qa-'));
+console.log(`QA artifacts: ${output}`);
 const baseUrl = process.env.PREVIEW_URL ?? 'http://localhost:3000';
 const browser = await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const context = await browser.newContext({viewport:{width:1280,height:900}});
 const page = await context.newPage();
 const errors=[]; const failed=[];
 page.on('pageerror',e=>errors.push(e.message)); page.on('response',r=>{if(r.status()>=400) failed.push({url:r.url(),status:r.status()});});
+await page.addInitScript(() => {
+  window.__qaNotchObservers = new Set();
+  const NativeResizeObserver = window.ResizeObserver;
+  window.ResizeObserver = class extends NativeResizeObserver {
+    observe(target, ...args) { if (target.classList.contains('notch')) window.__qaNotchObservers.add(this); return super.observe(target, ...args); }
+    disconnect() { window.__qaNotchObservers.delete(this); return super.disconnect(); }
+  };
+});
 await page.goto(baseUrl,{waitUntil:'networkidle'}); await page.waitForTimeout(1000);
 await expect(page.locator('canvas')).toHaveAttribute('data-ready', 'true');
 await expect(page.locator('.notch')).toHaveAttribute('data-open','false');
+for (let cycle = 0; cycle < 5; cycle++) {
+  await page.keyboard.press('Control+k');
+  await expect(page.locator('.notch-input')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.notch')).toHaveAttribute('data-open','false');
+}
+await expect.poll(() => page.evaluate(() => window.__qaNotchObservers.size)).toBe(1);
+
 await page.locator('.notch-open').hover(); await expect(page.locator('.notch')).toHaveAttribute('data-open','true');
 await expect(page.locator('.notch-input')).not.toBeFocused();
 await page.locator('.hero-intro').hover(); await expect(page.locator('.notch')).toHaveAttribute('data-open','false');
@@ -24,7 +41,7 @@ await page.locator('.hero-intro').hover(); await expect(page.locator('.notch')).
 await expect(page.locator('.notch-input')).toBeFocused();
 await page.keyboard.press('Escape'); await expect(page.locator('.notch')).toHaveAttribute('data-open','false');
 await page.keyboard.press('Control+k'); await expect(page.locator('.notch-input')).toBeFocused();
-await page.screenshot({path:'/tmp/vesper-focus.png'});
+await page.screenshot({path:join(output, 'focus.png')});
 await expect(page.locator('.notch-input')).toHaveCSS('outline-style','solid');
 await page.locator('.notch-input').fill('Make it neon'); await page.keyboard.press('Enter'); await expect(page.locator('html')).toHaveAttribute('data-theme','neon');
 await page.keyboard.press('Escape'); await page.getByRole('button',{name:'Dracula',exact:true}).click();

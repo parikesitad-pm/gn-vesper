@@ -1,0 +1,28 @@
+export const githubEnvironment = [
+  ["APP_URL", "Required for Connect", "Public origin, HTTPS in production. Example: http://localhost:3000."],
+  ["GITHUB_APP_SLUG", "Required for Connect", "The app slug from its github.com/apps URL."],
+  ["GITHUB_CLIENT_ID", "Required for Connect", "GitHub App settings → Client ID. This is not the App ID."],
+  ["GITHUB_CLIENT_SECRET", "Required for Connect", "Generate a client secret in the GitHub App settings."],
+  ["GITHUB_WEBHOOK_SECRET", "Required for Connect", "Generate a random value and set the same value in GitHub's webhook settings."],
+  ["SESSION_SECRET", "Required for Connect", "At least 32 random characters; signs the OAuth state cookie."],
+  ["TOKEN_ENCRYPTION_KEY", "Required for Connect", "64 hexadecimal characters; AES-256-GCM key for GitHub access and refresh tokens."],
+  ["DATABASE_URL", "Required on Vercel", "PostgreSQL connection URL. The vesper_watch table is created automatically."],
+  ["VESPER_DATA_DIR", "Optional locally", "Directory on a persistent volume for single-process file storage. Defaults to .vesper in the checkout."],
+  ["VAPID_PUBLIC_KEY", "Optional push", "Web Push public key. This is the only push key returned to the browser."],
+  ["VAPID_PRIVATE_KEY", "Optional push", "Matching Web Push private key; server only."],
+  ["VAPID_SUBJECT", "Optional push", "Contact URI, such as mailto:halo@d-ap.my.id."],
+] as const;
+export const githubEndpoints = [
+  ["GET", "/api/github/status", "Public setup state, missing variable names, and connected user identity. No secrets or tokens."],
+  ["GET", "/api/github/repository?repo=owner/repo", "Repository and latest 50 open PRs. Public without login; authenticated access when connected."],
+  ["GET", "/api/github/repository?repo=owner/repo&pull=123", "PR description, reviews (up to 100), and check runs (up to 100)."],
+  ["GET", "/api/github/auth/start", "Begin GitHub App OAuth with state validation and PKCE."],
+  ["GET", "/api/github/auth/callback", "Exchange an authorization code, encrypt tokens, and set an HttpOnly session cookie."],
+  ["POST", "/api/github/auth/logout", "Sign out. Send {\"forget\":true} to delete account-scoped Vesper data."],
+  ["GET", "/api/github/repositories", "Account's watched repositories and repositories accessible to the GitHub App."],
+  ["POST / DELETE", "/api/github/repositories", "Watch/unwatch an installed repository. JSON: {\"repo\":\"owner/repo\"}. Maximum 20 watched repositories."],
+  ["GET / PUT", "/api/github/preferences", "Get/save mode (all, mine, digest), event kinds, and browserNotifications."],
+  ["GET / POST", "/api/github/activity", "Read the newest 100 relevant events; POST {\"readAt\":\"ISO timestamp\"} to mark through that time as read."],
+  ["POST", "/api/github/webhook", "GitHub delivery endpoint. Requires a valid X-Hub-Signature-256 and X-GitHub-Delivery."],
+  ["POST / DELETE", "/api/github/push", "Register/remove the current browser's push subscription for the authenticated user."],
+] as const;

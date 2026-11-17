@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.5.1
+
+- Scope inbox button styles to the workspace and PR dialog so the collapsed island keeps its own spacing and centers the original Vesper face.
+
+## 0.5.0
+
+- Configure the Next.js deployment preset and exclude environment files, local watcher data, and test artifacts from Vercel uploads.
+- Add `/vesper`: persistent repository watchlists, open PRs, PR reviews and checks, activity, unread state, and notification controls.
+- Extend the island with repository, pull request, and activity views while retaining ACT/KNOW commands.
+- Support three public repositories without credentials; connect a GitHub App for private repositories and account storage.
+- Add OAuth with PKCE, encrypted user tokens, refresh, signed webhooks, delivery deduplication, and optional browser push.
+- Support PostgreSQL persistence and single-process local file storage; validate account access before returning activity or sending push.
+- Document GitHub App permissions, configuration, endpoint contracts, storage, and notification limits at `/docs/github`, with `.env.example` placeholders.
+- Add browser, accessibility, and isolated server integration checks, including account isolation and persistence after restart.
+
+## 0.4.1
+
+- Address SonarCloud findings in font promise handling, keyboard event semantics, QA temporary paths, and retrieval regexes.
+- Link the repository to its existing SonarCloud project.
+
+- Fix accumulated island ResizeObservers and retain current transforms during interrupted transitions.
+- Morph a persistent island surface; dismiss with Escape or outside click, with no × control.
+- Remove stale backdrop blur and improve mobile command controls.
+- Pause decorative 3D while the command island is in use and pause off-screen command previews.
+- Apply Lenis styles and keep tray scrolling local.
+- Add an observer regression check and repeatable keyboard/frame benchmark.
+
 ## 0.4.0
 
 - Require the shared persona-tujuh pilot briefing before implementation.

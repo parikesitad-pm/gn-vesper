@@ -46,7 +46,7 @@ export function Docs({ year }: { year: number }) {
     <a className="docs-skip" href="#docs-main">{t.skip}</a>
     <header className="docs-header"><Link href="/">vesper / GN-013</Link><div><label>{t.theme}<select value={theme} onChange={e => setTheme(e.target.value as Theme)}><option value="dark">Dracula</option><option value="light">Light</option><option value="neon">Neon</option></select></label><button onClick={() => setLanguage(language === "en" ? "id" : "en")} aria-label={t.language}>{language.toUpperCase()} ↗</button></div></header>
     <main id="docs-main" tabIndex={-1}>
-      <div className="docs-intro"><span>VESPER / DOCS</span><h1>{t.title}</h1><p>{t.intro}</p><Link href="/#playground">{t.try} →</Link></div>
+      <div className="docs-intro"><span>VESPER / DOCS</span><h1>{t.title}</h1><p>{t.intro}</p><Link href="/#playground">{t.try} →</Link><p><Link href="/docs/github">GitHub repository watcher: setup & API →</Link></p></div>
       <nav aria-label={language === "id" ? "Isi dokumentasi" : "On this page"}>{t.sections.map((title, i) => <a key={ids[i]} href={`#${ids[i]}`}>{String(i + 1).padStart(2, "0")} / {title}</a>)}</nav>
       {t.sections.map((title, i) => <section key={ids[i]} id={ids[i]}><h2>{title}</h2>
         <p>{[t.open, t.act, t.know, t.result, t.install, t.access][i]}</p>

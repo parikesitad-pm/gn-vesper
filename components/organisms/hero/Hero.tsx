@@ -9,8 +9,8 @@ import "./Hero.css";
 
 const Vessel = dynamic(() => import("@/components/organisms/vessel/Vessel"), { ssr: false });
 
-export function Hero({ text, onOpen, onHover, motion, theme, aiAvailable }: {
-  text: ShowcaseCopy; onOpen: () => void; onHover: (hovered: boolean) => void; motion: boolean; theme: Theme; aiAvailable: boolean;
+export function Hero({ text, onOpen, onHover, commandOpen, motion, theme, aiAvailable }: {
+  commandOpen: boolean; text: ShowcaseCopy; onOpen: () => void; onHover: (hovered: boolean) => void; motion: boolean; theme: Theme; aiAvailable: boolean;
 }) {
   return <section id="home" className="hero">
     <div className="hero-copy">
@@ -30,7 +30,7 @@ export function Hero({ text, onOpen, onHover, motion, theme, aiAvailable }: {
       <div className="vessel-grid" aria-hidden="true" />
       <button className="vessel-target" onClick={onOpen} aria-label={text.open}>
         <span className="vessel-poster" aria-hidden="true"><span className="poster-orbit" /><span className="poster-orbit secondary" /><span className="poster-core"><VesperFace state="answer" size={104} /></span></span>
-        <Vessel motion={motion} theme={theme} />
+        <Vessel motion={motion && !commandOpen} theme={theme} />
       </button>
       <span className="stage-coordinate" aria-hidden="true">x 013<br />y 000<br />z 001</span>
       <div className="stage-caption"><span className="status-dot" /><span>{motion ? text.ready : text.paused}</span><span className="stage-live">{motion ? "LIVE" : "STILL"}</span></div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { RepoWatchProvider } from "@/components/organisms/repo-provider/RepoWatchProvider";
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${mono.variable} ${sans.variable}`}>{children}</body>
+      <body className={`${mono.variable} ${sans.variable}`}><RepoWatchProvider>{children}</RepoWatchProvider></body>
     </html>
   );
 }
