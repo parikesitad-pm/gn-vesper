@@ -19,3 +19,7 @@ The header shows only the Vesper icon at rest. Hover or click the icon, or use C
 ## Motion
 
 GSAP handles the opening title, command-panel entrance, scroll progress, and pipeline tracking. Lenis uses the GSAP ticker. Three.js renders one procedural vessel with pointer response and scroll-linked rotation. Pause and reduced-motion settings disable presentation motion; static content stays visible. WebGL resources and GSAP contexts are disposed on unmount.
+
+## Text and background motion
+
+The hero title enters letter by letter, with one accessible heading label. Decorative command examples rotate every 3.5 seconds. Section headings move with scroll while retaining full text contrast. GSAP animates six background signal lanes; the existing Three.js scene moves its particle field without another canvas. Lenis remains on the GSAP ticker. Pause and reduced motion restore static text and background.

@@ -19,3 +19,13 @@
 .vpx-img[data-active="true"] {
   opacity: 1;
 }
+.vpx-activity { position: absolute; left: 50%; bottom: -7px; display: flex; gap: 3px; transform: translateX(-50%); opacity: 0; pointer-events: none; }
+.vpx-activity i { display: block; width: 3px; height: 3px; border-radius: 50%; background: var(--accent); }
+.vpx[data-face="think"] .vpx-activity, .vpx[data-loading="true"] .vpx-activity { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="off"]) .vpx[data-visible="true"][data-face="think"] .vpx-activity i,
+  html:not([data-motion="off"]) .vpx[data-visible="true"][data-loading="true"] .vpx-activity i { animation: vesper-working 1.2s ease-in-out infinite; }
+  .vpx-activity i:nth-child(2) { animation-delay: .15s !important; }
+  .vpx-activity i:nth-child(3) { animation-delay: .3s !important; }
+}
+@keyframes vesper-working { 0%, 80%, 100% { opacity: .35; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }

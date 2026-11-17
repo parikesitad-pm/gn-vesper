@@ -5,5 +5,5 @@ import { aiConfigured } from "@/lib/providers";
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  return <Playground aiAvailable={aiConfigured(process.env)} />;
+  return <Playground year={new Date().getFullYear()} aiAvailable={aiConfigured(process.env)} />;
 }

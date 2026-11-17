@@ -14,8 +14,9 @@ export function Hero({ text, onOpen, onHover, motion, theme, aiAvailable }: {
 }) {
   return <section id="home" className="hero">
     <div className="hero-copy">
-      <h1>{text.title.map((line, index) => <span className="hero-title-line" key={index}><span>{line}</span></span>)}</h1>
+      <h1 aria-label={text.title.join(" ")}>{text.title.map((line, index) => <span className="hero-title-line" key={index} aria-hidden="true"><span>{Array.from(line).map((char, i) => <span className="hero-letter" key={i}>{char === " " ? "\u00a0" : char}</span>)}</span></span>)}</h1>
       <p className="hero-intro">{text.intro}</p>
+      <div className="hero-command-preview" aria-hidden="true"><span className="preview-prompt">›</span><div>{text.actions.slice(0, 3).map((action, index) => <span className="preview-command" key={action} data-first={index === 0}>{action}</span>)}</div><span className="preview-cursor">_</span></div>
       <div className="hero-actions">
         <button className="btn" onClick={onOpen} onPointerEnter={(event) => { if (event.pointerType === "mouse") onHover(true); }} onPointerLeave={() => onHover(false)}>{text.open}<Arrow /></button>
         <span className="hero-shortcut"><kbd>⌘</kbd><kbd>K</kbd><span>/ Ctrl K</span></span>

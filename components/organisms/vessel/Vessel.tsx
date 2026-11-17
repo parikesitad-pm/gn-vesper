@@ -31,6 +31,9 @@ export default function Vessel({ motion, theme }: { motion: boolean; theme: Them
     let visible = true;
     let lost = false;
     let elapsed = 0;
+    let slowFrames = 0;
+    let quality = Math.min(window.devicePixelRatio, window.innerWidth < 600 ? 1 : 1.5);
+    renderer.setPixelRatio(quality);
     let lastTheme: Theme | null = null;
     let lastMotion = true;
     const resize = () => {
@@ -61,6 +64,15 @@ export default function Vessel({ motion, theme }: { motion: boolean; theme: Them
     const tick = (_time: number, deltaMs: number) => {
       if (lost || !visible || document.hidden) return;
       const current = settings.current;
+      if (current.motion && deltaMs > 35) slowFrames += 1;
+      else slowFrames = Math.max(0, slowFrames - 1);
+      if (slowFrames > 45 && quality > 1) {
+        quality = Math.max(1, quality - 0.25);
+        renderer.setPixelRatio(quality);
+        element.dataset.quality = String(quality);
+        slowFrames = 0;
+        resize();
+      }
       const changed = current.theme !== lastTheme;
       if (changed) {
         vessel.accent.color.set(current.theme === "neon" ? "#ff3038" : "#ff5555");
@@ -76,6 +88,8 @@ export default function Vessel({ motion, theme }: { motion: boolean; theme: Them
         vessel.assembly.rotation.x += (-pointer.y - 0.22 - vessel.assembly.rotation.x) * smoothing;
         vessel.assembly.position.y = Math.sin(elapsed * 0.65) * 0.09;
         vessel.orbit.rotation.z = elapsed * 0.055;
+        vessel.particles.rotation.z = elapsed * 0.025;
+        vessel.particles.position.y = Math.sin(elapsed * 0.2) * 0.3;
         vessel.core.rotation.y = Math.sin(elapsed * 0.35) * 0.08;
       }
       lastMotion = current.motion;

@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Chip } from "@/components/atoms/Chip";
 import { VesperFace, type FaceState } from "@/components/atoms/VesperFace";
 import { CreatorCard } from "@/components/molecules/CreatorCard";
+import { RequestControls, type RequestControlsProps } from "@/components/molecules/RequestControls";
 import { AnswerOrigin } from "@/components/molecules/answer-origin/AnswerOrigin";
 import { SourceList } from "@/components/molecules/SourceList";
 import type { Copy } from "@/lib/copy";
@@ -16,6 +17,7 @@ import "./Notch.css";
 export type NotchState = "idle" | "input" | "thinking" | "result" | "answer" | "help" | "handoff" | "error";
 
 export type NotchProps = {
+  controls: RequestControlsProps;
   open: boolean;
   language: import("@/lib/intent/types").Language;
   state: NotchState;
@@ -38,6 +40,7 @@ export type NotchProps = {
 };
 
 export function Notch({
+  controls,
   open,
   language,
   state,
@@ -135,6 +138,7 @@ export function Notch({
               )
             )}
 
+            <RequestControls {...controls} />
             <span className="notch-tray-label">{copy.examplesLabel}</span>
             {examples.map((ex) => (
               <Chip key={ex} disabled={busy} onClick={() => onExample(ex)}>

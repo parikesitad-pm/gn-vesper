@@ -1,4 +1,5 @@
 Read `PILOT.md` before working in this repository.
+Then read the shared pilot rules at `../persona-tujuh/pilot.md` before implementation. The filename is lowercase. If that checkout is elsewhere, locate it; do not substitute this repo briefing for the shared rules.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

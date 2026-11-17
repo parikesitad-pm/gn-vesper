@@ -173,3 +173,8 @@ a { text-underline-offset: 4px; }
   :focus-visible { outline: 2px solid Highlight; }
   button, input, select { border: 1px solid ButtonText; }
 }
+.vesper-loading { min-height: 60svh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+.vesper-loading p { color: var(--dim); font: 13px var(--mono); }
+.request-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; font: 12px/1.5 var(--mono); }
+.request-controls:empty { display: none; }
+.request-controls .chip { min-height: 44px; }

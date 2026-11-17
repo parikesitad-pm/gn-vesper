@@ -46,3 +46,8 @@
 .docs-link { display: inline-flex; align-items: center; min-height: 44px; font: 12px var(--mono); }
 .site-nav a, .text-link, .footer-bottom a { display: inline-flex; align-items: center; min-height: 44px; }
 .language-switch, .motion-switch { min-height: 44px; min-width: 44px; }
+.showcase { position: relative; isolation: isolate; }
+.signal-background { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: .28; }
+.signal-lane { position: absolute; height: 150vh; width: 1px; background: color-mix(in srgb, var(--accent) 12%, transparent); transform: rotate(18deg); transform-origin: top; }
+.signal-lane i { position: absolute; width: 1px; height: 100px; background: linear-gradient(transparent, var(--accent)); }
+[data-theme="light"] .signal-background { opacity: .16; }

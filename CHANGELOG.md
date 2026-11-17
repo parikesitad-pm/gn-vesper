@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0
+
+- Require the shared persona-tujuh pilot briefing before implementation.
+- Use the approved footer credit on home and docs, with a server-supplied year.
+
+- Add cancellable requests, retry, and undo for page actions.
+- Persist validated theme, language, and motion preferences locally.
+- Make island suggestions follow the current section.
+- Reduce rendering resolution after sustained slow frames, within DPR 1–1.5.
+- Add Vesper loading and idle states, animated text, and background motion.
+
+
 All notable changes to Vesper Notch are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows

@@ -64,7 +64,44 @@ export function useVesper(aiAvailable: boolean) {
   const [language, setLanguage] = useState<Language>("en");
   const [theme, setTheme] = useState<Theme>("dark");
   const [motionOn, setMotionOn] = useState(true);
+  const [preferencesReady, setPreferencesReady] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [lastInput, setLastInput] = useState("");
+  const [undoState, setUndoState] = useState<{theme: Theme; language: Language; motionOn: boolean; y: number; stack: Destination[]} | null>(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("vesper-preferences") ?? "null");
+      if (saved) {
+        if (["dark", "light", "neon"].includes(saved.theme)) setTheme(saved.theme);
+        if (["en", "id"].includes(saved.language)) setLanguage(saved.language);
+        if (typeof saved.motionOn === "boolean") setMotionOn(saved.motionOn);
+      }
+    } catch { /* Storage may be disabled or contain an older preference format. */ }
+    setPreferencesReady(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => {
+    if (!preferencesReady) return;
+    try { localStorage.setItem("vesper-preferences", JSON.stringify({ theme, language, motionOn })); } catch { /* Preferences still work in memory. */ }
+  }, [preferencesReady, theme, language, motionOn]);
   const [open, setOpen] = useState(false);
+  const [resting, setResting] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const wake = () => {
+      setResting(false);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setResting(true), 30000);
+    };
+    const visibility = () => { if (document.hidden) { clearTimeout(timeout); setResting(true); } else wake(); };
+    wake();
+    window.addEventListener("pointerdown", wake, { passive: true });
+    window.addEventListener("keydown", wake);
+    document.addEventListener("visibilitychange", visibility);
+    return () => { clearTimeout(timeout); window.removeEventListener("pointerdown", wake); window.removeEventListener("keydown", wake); document.removeEventListener("visibilitychange", visibility); };
+  }, []);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [trace, setTrace] = useState<Trace | null>(null);
@@ -197,6 +234,8 @@ export function useVesper(aiAvailable: boolean) {
       askAbort.current?.abort();
       const controller = new AbortController();
       askAbort.current = controller;
+      setLastInput(line);
+      setNotice("");
       setInput("");
       setBusy(true);
       setExec(null);
@@ -234,10 +273,13 @@ export function useVesper(aiAvailable: boolean) {
       }
 
       setTrace(nextTrace);
-      if (intent) setExec(execute(intent, ctx));
+      if (intent) {
+        setUndoState(["theme", "language", "motion", "navigate", "back"].includes(intent.action) ? { theme, language, motionOn, y: window.scrollY, stack: [...navStack.current] } : null);
+        setExec(execute(intent, ctx));
+      }
       setBusy(false);
     },
-    [aiAvailable, ctx],
+    [aiAvailable, ctx, theme, language, motionOn],
   );
 
   const openNotch = useCallback(() => {
@@ -272,11 +314,25 @@ export function useVesper(aiAvailable: boolean) {
       ? "think"
       : state === "error"
         ? "oops"
-        : state === "idle"
+        : !open && resting
           ? "sleep"
           : "answer";
 
-  const statusText = busy
+  const cancel = () => {
+    askAbort.current?.abort();
+    setBusy(false);
+    setNotice(language === "id" ? "Permintaan dibatalkan." : "Request cancelled.");
+  };
+  const undo = () => {
+    if (!undoState || busy) return;
+    setTheme(undoState.theme); setLanguage(undoState.language); setMotionOn(undoState.motionOn);
+    navStack.current = undoState.stack;
+    window.scrollTo({ top: undoState.y, behavior: "instant" });
+    setUndoState(null); setExec(null);
+    setNotice(undoState.language === "id" ? "Aksi terakhir dibatalkan." : "Last action undone.");
+  };
+  const retry = () => { if (lastInput && !busy) void run(lastInput); };
+  const statusText = notice || (busy
     ? copy.status.thinking
     : knowledge
       ? knowledge.answer
@@ -290,7 +346,7 @@ export function useVesper(aiAvailable: boolean) {
               : !trace.validation.ok && trace.validation.reason === "empty"
                 ? copy.status.empty
                 : copy.status.unsure
-          : "";
+          : "");
 
-  return { language, setLanguage, theme, setTheme, motionOn, setMotionOn, open, setOpen, input, setInput, busy, trace, knowledge, section, copy, inputRef, run, openNotch, state, face, statusText };
+  return { cancel, retry, undo, canUndo: !!undoState, canRetry: !!lastInput && (notice === "Request cancelled." || notice === "Permintaan dibatalkan." || trace?.status === "error"), language, setLanguage, theme, setTheme, motionOn, setMotionOn, open, setOpen, input, setInput, busy, trace, knowledge, section, copy, inputRef, run, openNotch, state, face, statusText };
 }

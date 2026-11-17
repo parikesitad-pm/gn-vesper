@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Arrow } from "@/components/atoms/Arrow";
 import { VesperFace, type FaceState } from "@/components/atoms/VesperFace";
+import { RequestControls, type RequestControlsProps } from "@/components/molecules/RequestControls";
 import { AnswerOrigin } from "@/components/molecules/answer-origin/AnswerOrigin";
 import { SourceList } from "@/components/molecules/SourceList";
 import type { ShowcaseCopy } from "@/data/showcase";
@@ -10,8 +11,8 @@ import type { KnowledgeAnswer } from "@/lib/rag/types";
 import type { Theme, Trace } from "@/lib/intent/types";
 import "./CommandLab.css";
 
-export function CommandLab({ text, language, busy, run, status, knowledge, trace, face, theme, setTheme }: {
-  text: ShowcaseCopy; language: import("@/lib/intent/types").Language; busy: boolean; run: (input: string) => Promise<void>; status: string;
+export function CommandLab({ controls, text, language, busy, run, status, knowledge, trace, face, theme, setTheme }: {
+  controls: RequestControlsProps; text: ShowcaseCopy; language: import("@/lib/intent/types").Language; busy: boolean; run: (input: string) => Promise<void>; status: string;
   knowledge: KnowledgeAnswer | null; trace: Trace | null; face: FaceState; theme: Theme; setTheme: (theme: Theme) => void;
 }) {
   const [tab, setTab] = useState<"act" | "know">("act");
@@ -46,6 +47,7 @@ export function CommandLab({ text, language, busy, run, status, knowledge, trace
           <div className="output-header"><span>OUTPUT</span><span>{busy ? "RUNNING" : trace ? trace.kind?.toUpperCase() ?? "ACT" : "IDLE"}</span></div>
           <VesperFace state={face} size={48} />
           <div role="status" aria-live="polite" className="output-text"><p>{status || text.empty}</p>{!status && <span>{text.emptyDetail}</span>}</div>
+          <RequestControls {...controls} />
           {knowledge && <AnswerOrigin answer={knowledge} language={language} />}
           {knowledge && <SourceList sources={knowledge.sources} label="Sources" />}
           {trace && <a className="output-inspect" href="#inspector">{text.nav[2]}<Arrow diagonal /></a>}

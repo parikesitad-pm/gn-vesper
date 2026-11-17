@@ -38,3 +38,9 @@
 @media (min-width: 1500px) { .hero { gap: 64px; } }
 @media (max-width: 850px) { .hero { grid-template-columns: 1fr 1fr; gap: 0; min-height: 680px; } .hero h1 { font-size: clamp(40px, 6.6vw, 64px); } .hero-intro { font-size: 15px; } .hero-shortcut { display: none; } .stage-coordinate { display: none; } .stage-meta { font-size: 8px; left: 12px; right: 12px; } .stage-caption { font-size: 9px; left: 12px; right: 12px; } }
 @media (max-width: 600px) { .hero { grid-template-columns: 1fr; padding-top: 28px; min-height: auto; } .hero-copy { padding: 24px 0 0; } .hero h1 { font-size: clamp(44px, 11vw, 64px); } .hero-intro { font-size: 16px; max-width: 38ch; margin: 20px 0 24px; } .hero-explore { margin-top: 24px; } .vessel-stage { height: 380px; margin-top: 24px; } .hero-bottom { padding: 20px 0; } .hero-system { font-size: 8px; gap: 5px; } .system-separator { margin: 0 2px; } .scroll-cue { font-size: 9px; gap: 8px; } .scroll-line { width: 16px; } }
+.hero-letter { display: inline-block; }
+.hero-command-preview { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; font: 12px/1.8 var(--mono); color: var(--dim); min-height: 24px; }
+.hero-command-preview > div { display: grid; }
+.preview-command { grid-area: 1 / 1; opacity: 0; }
+.preview-command[data-first="true"] { opacity: 1; }
+.preview-prompt, .preview-cursor { color: var(--accent); }

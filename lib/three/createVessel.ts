@@ -74,7 +74,8 @@ export function createVessel(invalidate: () => void) {
   }
   const starGeometry = new THREE.BufferGeometry();
   starGeometry.setAttribute("position", new THREE.BufferAttribute(stars, 3));
-  scene.add(new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: "#ff5555", size: 0.018, transparent: true, opacity: 0.65 })));
+  const particles = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: "#ff5555", size: 0.035, transparent: true, opacity: 0.65 }));
+  scene.add(particles);
   scene.add(new THREE.HemisphereLight("#f8f8f2", "#211b1d", 2));
   const key = new THREE.DirectionalLight("#ff5555", 5);
   key.position.set(-3, 5, 5);
@@ -98,5 +99,5 @@ export function createVessel(invalidate: () => void) {
     materials.forEach((material) => material.dispose());
     texture.dispose();
   };
-  return { scene, assembly, orbit, core, accent, ember, mint, dispose };
+  return { particles, scene, assembly, orbit, core, accent, ember, mint, dispose };
 }

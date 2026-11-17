@@ -2,6 +2,8 @@
 
 Pilot: dap_. Agents are copilots; product decisions belong to the pilot.
 
+Read and apply `../persona-tujuh/pilot.md` before implementation. Rule 1: dap is the pilot. The shared rules govern communication and engineering; this briefing records project decisions.
+
 ## Mission
 
 Vesper (GN-013) is a compact natural-language interface for safe page actions and creator answers with public sources. Owl (GN-011) is a separate conversational assistant.
@@ -11,6 +13,10 @@ Vesper (GN-013) is a compact natural-language interface for safe page actions an
 Replace the presentation with an interactive Dracula experience using GSAP, ScrollTrigger, Lenis, and Three.js. Keep ACT/KNOW behavior, source links, bilingual copy, and the observable execution trace.
 
 ## Decisions
+
+- 2026-11-17: Pilot explicitly requires the shared footer on home and docs: `crafted by dap_ · a modula project · © <year>`, with the year supplied by the server.
+
+- 2026-11-16: Pilot requested adaptive 3D quality, cancel/retry, contextual suggestions, saved preferences, and undo before proposing expanded Groq capabilities.
 
 - 2026-11-16: Show actual KNOW provider/model beside answers in both console and island, label local answers honestly, and provide bilingual `/docs` with usage and integration guidance. Keyboard navigation, visible focus, target sizes, and WCAG 2.2 AA automated checks are part of UI verification.
 
